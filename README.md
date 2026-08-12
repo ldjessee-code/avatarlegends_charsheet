@@ -89,10 +89,15 @@ Shown on the left when expanded; tiny thumb in the collapsed header if present.
 
 ### Current playbooks
 
-| Playbook | Status |
-|----------|--------|
-| The Adamant (Core) | Ready |
-| Other Core + WSTAG | Planned (same engine) |
+| Playbook | Source | Status |
+|----------|--------|--------|
+| The Adamant | Core | Ready |
+| The Bold | Core | Ready |
+| The Guardian | Core | Ready |
+| The Foundling | WST Adventure Guide | Ready |
+| Other Core + WSTAG | — | Planned (same engine) |
+
+**Live hub:** https://ldjessee-code.github.io/avatarlegends_charsheet/
 
 ---
 
