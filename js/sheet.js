@@ -162,7 +162,7 @@
       creationBonusStat: "",
       balance: 0,
       center: 0,
-      conditions: Object.fromEntries(AL.COMMON.conditions.map((c) => [c.id, false])),
+      conditions: Object.fromEntries(playbookConditions(pb).map((c) => [c.id, false])),
       statuses: Object.fromEntries(
         [...AL.COMMON.statuses.positive, ...AL.COMMON.statuses.negative].map((s) => [s, false])
       ),
@@ -215,6 +215,12 @@
     if (merged.backstory == null) merged.backstory = "";
     if (merged.portraitDataUrl == null) merged.portraitDataUrl = "";
     merged.campaign = { ...defaultCampaignBrand(), ...(raw.campaign || {}) };
+    // Normalize condition keys to this playbook’s condition list
+    const condList = playbookConditions(pb);
+    const prevConds = merged.conditions || {};
+    merged.conditions = Object.fromEntries(
+      condList.map((c) => [c.id, !!prevConds[c.id]])
+    );
     if (Array.isArray(merged.techniques)) {
       merged.techniques = compactTechniques(pb, merged.techniques);
     } else {
@@ -248,6 +254,12 @@
 
   function historyAnsweredCount(state) {
     return (state.historyAnswers || []).filter((a) => String(a || "").trim()).length;
+  }
+
+  /** Standard conditions, or a playbook override (e.g. The Elder). */
+  function playbookConditions(pb) {
+    if (pb && Array.isArray(pb.conditions) && pb.conditions.length) return pb.conditions;
+    return AL.COMMON.conditions;
   }
 
   function formatStat(n) {
@@ -919,7 +931,7 @@
       rightCol.appendChild(fatRow);
 
       // Labels help players keep CONDITIONS (character harm) vs STATUSES (exchange fiction) distinct
-      const markedCond = AL.COMMON.conditions
+      const markedCond = playbookConditions(pb)
         .filter((c) => state.conditions[c.id])
         .map((c) => c.name);
       if (markedCond.length) {
@@ -1069,7 +1081,8 @@
         const cond = document.createElement("div");
         cond.className = "subcard";
         cond.innerHTML = "<h3>Conditions</h3>";
-        AL.COMMON.conditions.forEach((c) => {
+        playbookConditions(pb).forEach((c) => {
+          if (state.conditions[c.id] === undefined) state.conditions[c.id] = false;
           const lab = document.createElement("label");
           lab.className = "chip condition";
           const cb = document.createElement("input");

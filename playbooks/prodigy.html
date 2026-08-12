@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <title>The Prodigy — Avatar Legends Character Sheet</title>
+  <!-- Shared look & layout for all playbooks -->
+  <link rel="stylesheet" href="../css/sheet.css" />
+</head>
+<!--
+  data-playbook must match AL.PLAYBOOKS key in data/playbooks/<id>.js
+  No web server required: open this file directly in a browser (file://).
+-->
+<body data-playbook="prodigy">
+  <!-- Sticky chrome: save/load, print, hub link (shrinks slightly after scroll) -->
+  <div class="toolbar" id="toolbar">
+    <h1 id="toolbar-title">The Prodigy</h1>
+    <div class="actions">
+      <span class="status-msg" id="save-status" title="Autosaves to this browser’s storage (not a downloadable file)"></span>
+      <button type="button" id="btn-export" class="primary-file" title="Download a JSON file you can back up or send to your GM">Download JSON</button>
+      <button type="button" id="btn-import" class="primary-file" title="Load a character from a JSON file">Load JSON</button>
+      <input type="file" id="file-import" accept="application/json,.json" hidden />
+      <button type="button" id="btn-print" class="secondary">Print</button>
+      <button type="button" id="btn-reset" class="secondary">Reset</button>
+      <a href="../index.html" class="btn secondary">All playbooks</a>
+    </div>
+  </div>
+
+  <!-- Sheet content is built by js/sheet.js into #sheet-root -->
+  <div id="sheet-root" class="sheet"></div>
+
+  <p class="footer-note">
+    Unofficial digital sheet for Avatar Legends: The Roleplaying Game
+    (<a href="https://magpiegames.com/" target="_blank" rel="noopener noreferrer">Magpie Games</a>).
+    For personal table use. Avatar Legends and related marks ©
+    <a href="https://www.viacomcbs.com/" target="_blank" rel="noopener noreferrer">Viacom</a> International Inc.
+    Changes autosave in this browser; use <strong>Download JSON</strong> for backups and sharing with your GM.
+  </p>
+
+  <!-- Load order matters: common → campaign → playbook data → engine -->
+  <script src="../data/common.js"></script>
+  <script src="../data/campaign.js"></script>
+  <script src="../data/playbooks/prodigy.js"></script>
+  <script src="../js/sheet.js"></script>
+</body>
+</html>
