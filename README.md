@@ -157,7 +157,7 @@ Or create the GitHub repo first and send the URL to finish the push.
 
 ## Status & roadmap
 
-- [x] Adamant example sheet (full interactive)
+- [x] Adamant, Bold, Guardian, Foundling sheets
 - [x] Collapsible sections, training themes, session notes, campaign banner
 - [x] Save/load JSON + browser autosave
 - [ ] Remaining Core + Wan Shi Tong’s playbooks (same engine + data files)
