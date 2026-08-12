@@ -2204,13 +2204,20 @@
   // ---------- File I/O ----------
 
   function exportJson() {
+    const pagesBase = "https://ldjessee-code.github.io/avatarlegends_charsheet";
     const payload = {
       _meta: {
         app: "avatar-legends-charsheet",
         version: 2,
         playbookId: currentPb.id,
         playbookName: currentPb.name,
-        exportedAt: new Date().toISOString()
+        exportedAt: new Date().toISOString(),
+        /** Source code */
+        repoUrl: "https://github.com/ldjessee-code/avatarlegends_charsheet",
+        /** Live sheets hub */
+        pagesUrl: pagesBase + "/",
+        /** Direct link to this playbook’s sheet (open, then Load JSON if needed) */
+        playbookUrl: pagesBase + "/playbooks/" + currentPb.id + ".html"
       },
       character: currentState
     };
