@@ -1291,6 +1291,39 @@ textarea {
   margin-top: 0.15rem;
 }
 
+/* Playbook drives (e.g. The Bold) */
+.drives-box {
+  margin: 0.5rem 0 0.75rem;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--gold) 6%, #fff);
+}
+
+.drive-row {
+  display: grid;
+  grid-template-columns: 5.5rem 1fr;
+  gap: 0.4rem;
+  align-items: start;
+  margin-bottom: 0.35rem;
+  font-size: 0.86rem;
+  cursor: default;
+}
+
+.drive-row .drive-status {
+  font-size: 0.8rem;
+  padding: 0.25rem 0.3rem;
+}
+
+.drive-row.is-marked span {
+  font-weight: 600;
+}
+
+.drive-row.is-struck span {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+
 .session-note {
   border: 1px solid var(--line);
   border-radius: 8px;

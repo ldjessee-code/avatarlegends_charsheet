@@ -374,16 +374,27 @@
   }
 
   function startingTechniques(pb) {
-    if (!pb.startingTechnique) return [];
-    return [
-      {
+    const list = [];
+    if (pb.startingTechnique) {
+      list.push({
         sourceId: pb.startingTechnique.id,
         name: pb.startingTechnique.name,
         approach: pb.startingTechnique.approach,
         text: pb.startingTechnique.text,
-        mastery: "learned"
-      }
-    ];
+        // Most playbooks start with this technique mastered; allow override
+        mastery: pb.startingTechnique.mastery || "mastered"
+      });
+    }
+    // e.g. Foundling starts with an extra mastered technique of their choice
+    const extra = pb.extraStartingTechniqueSlots || 0;
+    for (let i = 0; i < extra; i++) {
+      list.push({
+        ...emptyTech(),
+        mastery: "mastered",
+        learned: true
+      });
+    }
+    return list;
   }
 
   function isTechEmpty(t) {
@@ -1150,6 +1161,70 @@
     return lab;
   }
 
+  /**
+   * Drive tracker for playbooks like The Bold.
+   * State: featureFields.drives = { [driveText]: "" | "marked" | "struck" }
+   * At start, mark four; when fulfilled, set to struck.
+   */
+  function renderDrives(pb, state) {
+    if (!state.featureFields.drives || typeof state.featureFields.drives !== "object") {
+      state.featureFields.drives = {};
+    }
+    const box = document.createElement("div");
+    box.className = "drives-box";
+    const h = document.createElement("h3");
+    h.style.cssText = "margin:0.5rem 0 0.35rem;font-size:0.82rem;color:var(--gold)";
+    h.textContent = "Drives (mark 4 at start; strike when fulfilled)";
+    box.appendChild(h);
+    const markedCount = Object.values(state.featureFields.drives).filter((v) => v === "marked").length;
+    const struckCount = Object.values(state.featureFields.drives).filter((v) => v === "struck").length;
+    const meta = document.createElement("p");
+    meta.className = "hint";
+    meta.textContent = `Marked: ${markedCount} · Struck: ${struckCount}. Fulfilling a marked drive: strike it out and mark growth or clear a condition.`;
+    box.appendChild(meta);
+    pb.feature.drives.forEach((drive) => {
+      const row = document.createElement("label");
+      row.className = "drive-row";
+      const sel = document.createElement("select");
+      sel.className = "drive-status";
+      [
+        { v: "", l: "—" },
+        { v: "marked", l: "Marked" },
+        { v: "struck", l: "Struck" }
+      ].forEach((o) => {
+        const opt = document.createElement("option");
+        opt.value = o.v;
+        opt.textContent = o.l;
+        sel.appendChild(opt);
+      });
+      sel.value = state.featureFields.drives[drive] || "";
+      if (sel.value === "struck") row.classList.add("is-struck");
+      if (sel.value === "marked") row.classList.add("is-marked");
+      sel.addEventListener("change", () => {
+        // Cap marked at 4 unless already marked (allow unmark)
+        if (sel.value === "marked") {
+          const current = Object.entries(state.featureFields.drives).filter(
+            ([k, v]) => v === "marked" && k !== drive
+          ).length;
+          if (current >= 4) {
+            alert("You already have four marked drives. Strike one out or unmark one first.");
+            sel.value = state.featureFields.drives[drive] || "";
+            return;
+          }
+        }
+        state.featureFields.drives[drive] = sel.value;
+        scheduleSave();
+        refresh();
+      });
+      const span = document.createElement("span");
+      span.textContent = drive;
+      row.appendChild(sel);
+      row.appendChild(span);
+      box.appendChild(row);
+    });
+    return box;
+  }
+
   function renderPlaybookSection(pb, state) {
     const expanded = state.ui.playbookExpanded !== false;
     const chosen = (state.selectedMoves || [])
@@ -1178,16 +1253,32 @@
         fh.textContent = pb.feature.name || "Feature";
         feat.appendChild(fh);
         (pb.feature.fields || []).forEach((f) => {
-          feat.appendChild(
-            field(
-              f.label,
-              textInput(state.featureFields[f.id] || "", (v) => {
-                state.featureFields[f.id] = v;
-                scheduleSave();
-              })
-            )
-          );
+          if (f.type === "textarea") {
+            const ta = document.createElement("textarea");
+            ta.value = state.featureFields[f.id] || "";
+            ta.placeholder = f.placeholder || "";
+            ta.style.minHeight = f.minHeight || "4.5rem";
+            ta.addEventListener("input", () => {
+              state.featureFields[f.id] = ta.value;
+              scheduleSave();
+            });
+            feat.appendChild(field(f.label, ta));
+          } else {
+            feat.appendChild(
+              field(
+                f.label,
+                textInput(state.featureFields[f.id] || "", (v) => {
+                  state.featureFields[f.id] = v;
+                  scheduleSave();
+                }, f.placeholder)
+              )
+            );
+          }
         });
+        // Optional drive checklist (The Bold, etc.)
+        if (pb.feature.drives && pb.feature.drives.length) {
+          feat.appendChild(renderDrives(pb, state));
+        }
         const ft = document.createElement("div");
         ft.className = "feature-text";
         (pb.feature.text || []).forEach((para) => {

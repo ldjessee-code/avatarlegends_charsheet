@@ -1,0 +1,140 @@
+/**
+ * foundling.js — The Foundling (Wan Shi Tong’s Adventure Guide)
+ * Extracted from AvatarLegends-WSTAG-Playbooks-printerfriendly-3.pdf
+ */
+window.AL = window.AL || {};
+AL.PLAYBOOKS = AL.PLAYBOOKS || {};
+
+AL.PLAYBOOKS.foundling = {
+  id: "foundling",
+  name: "The Foundling",
+  source: "Wan Shi Tong’s Adventure Guide",
+  tagline: "You are a child of two cultures.",
+
+  principles: {
+    left: "Heritage",
+    right: "Unity"
+  },
+
+  baseStats: {
+    Creativity: 1,
+    Focus: -1,
+    Harmony: 1,
+    Passion: 0
+  },
+
+  demeanors: ["Caring", "Dedicated", "Friendly", "Modest", "Respectful", "Shy"],
+
+  feature: {
+    name: "Double Heritage",
+    summary: "Two trainings, two backgrounds, and techniques from many places.",
+    fields: [
+      {
+        id: "heritage_a_training",
+        label: "Heritage A — training",
+        type: "text",
+        placeholder: "e.g. Waterbending"
+      },
+      {
+        id: "heritage_a_background",
+        label: "Heritage A — background",
+        type: "text",
+        placeholder: "e.g. Urban"
+      },
+      {
+        id: "heritage_b_training",
+        label: "Heritage B — training",
+        type: "text",
+        placeholder: "e.g. Firebending"
+      },
+      {
+        id: "heritage_b_background",
+        label: "Heritage B — background",
+        type: "text",
+        placeholder: "e.g. Privileged"
+      }
+    ],
+    text: [
+      "At character creation, choose two trainings and two backgrounds that represent your two heritages. You also start play with two mastered techniques (including your playbook technique) instead of the normal one mastered technique. Fill the second technique slot below Fighting techniques.",
+      "Wisdom From Many Places — You can study with a master to learn techniques from any training and adapt them to your own. When you start learning a technique of a training you don’t have with a willing teacher, roll, taking +1 for each “yes” to the following questions:",
+      "• Is your Unity greater than zero?",
+      "• Have you studied this technique before?",
+      "• Has someone used this technique against you in real battle?",
+      "On a hit, you learn the technique; shift your balance towards Unity. On a 7–9, learning it was trying; mark a condition and write its name by the technique. You can’t use the technique if you have that condition marked. When you master the technique, erase the condition’s name. On a miss, you’re struggling to incorporate the lesson into your training; you must find a new master to continue your training.",
+      "Cultural Bonds — When you try to connect with an NPC via a shared culture, roll with Heritage. On a hit, they see you; shift your balance toward Heritage. On a 7–9, choose 1; on a 10+, choose 2:",
+      "• They accept you; they cease hostilities or antagonism toward you.",
+      "• They grow to like you (if they already accept you); they agree to help you with a problem.",
+      "• They reveal their background; you learn their principle.",
+      "• They offer solace; you clear a condition.",
+      "• They reveal a vulnerability; you become Prepared to deal with them.",
+      "On a miss, you mix up your heritages in a terrible way; the NPC mocks you or gets offended by your slip. Mark a condition and shift your balance away from Heritage."
+    ]
+  },
+
+  movesChoose: 2,
+  moves: [
+    {
+      id: "empty-your-mind",
+      name: "Empty Your Mind",
+      text: "You can flow and adapt, formless and shapeless. During an exchange, after you roll the stance move, you can mark 1-fatigue to select a basic technique from a different approach than the one you chose. (You still must pay all other costs of that technique.)"
+    },
+    {
+      id: "building-bridges",
+      name: "Building Bridges",
+      text: "When you try to calm an immediate conflict between two NPCs, remind them what they have in common and roll with Harmony. On a hit, they come to terms, for now. They won’t pursue their conflict until an outside influence reignites it or time passes (a day or more). On a 10+, you have a real opportunity to get them to put aside their conflict for good; the GM will tell you what you must do. On a miss, you inadvertently highlight their differences and fan the conflict—you cannot use this move on them again."
+    },
+    {
+      id: "martial-sensitive",
+      name: "Martial Sensitive",
+      text: "You are good at reading people’s intentions and gestures in the heat of battle. When you defend and maneuver against a foe whose principle you know, mark fatigue to roll with Harmony instead of Focus."
+    },
+    {
+      id: "trusty-talisman",
+      name: "Trusty Talisman",
+      text: "You have a specific weapon, tool, or item which you believe is crucial to your training and abilities. You can roll with Harmony instead of Focus when you use the item to rely on your skills and training. If you roll a miss, the item is damaged—in addition to any other consequences—and needs repairs. If the item is damaged again before you get a chance to repair it, it is destroyed. You are Impaired without it, until someone helps you overcome the loss; choose a new move to replace this one when you finally move on."
+    },
+    {
+      id: "things-in-common",
+      name: "Things in Common",
+      text: "When you guide and comfort someone who shares a training or a background with you by talking about what you have in common, on a hit you become Inspired, and if they embrace your guidance and comfort, they become Inspired as well."
+    }
+  ],
+
+  history: [
+    "How and when did you learn about your second heritage?",
+    "Who in your family insists you focus on upholding the family heritage?",
+    "Who helped you understand that your two trainings can complement each other?",
+    "What detail of your clothing or visible trinket reveals you belong to two cultures?",
+    "Why are you committed to this group or purpose?"
+  ],
+
+  connections: [
+    {
+      id: "conn1",
+      prompt:
+        "seems to think one of my heritages should be valued more; there’s something persuasive in their words."
+    },
+    {
+      id: "conn2",
+      prompt:
+        "is so awesome, with skills and heritage I’ve never seen! I want to learn all I can about them and their background."
+    }
+  ],
+
+  growthQuestion:
+    "Did you resolve an issue or conflict relying on something other than your trainings?",
+
+  momentOfBalance:
+    "You have always struggled to find unity between your two halves while trying to honor their traditions. But true balance is about knowing that everything is part of a greater whole. One heritage cannot exist without the other...especially within you. Tell the GM how your new understanding lets you use both your trainings to accomplish an incredible feat or vanquish an enemy that seems unstoppable.",
+
+  startingTechnique: {
+    id: "feel-the-flow",
+    name: "Feel the Flow",
+    approach: "evade",
+    mastery: "mastered",
+    text: "You take pause to feel the flow of battle and study the way your opposition fights. You become Favored. If they share a training with you, learn their principle. If you know their principle, clear 1-fatigue (even if they do not share the same training)."
+  },
+
+  /** Second mastered technique slot (player chooses technique) */
+  extraStartingTechniqueSlots: 1
+};
