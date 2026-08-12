@@ -1,21 +1,24 @@
 /**
- * campaign.js — Table / campaign branding (not playbook rules)
+ * campaign.js — Default table / campaign branding (not playbook rules)
  *
- * Edit this file to rename the campaign or swap the banner image.
+ * This is the *package default* for this zip/repo (Iron and Ash).
+ * Players can hide the banner or upload their own from Session notes
+ * on the sheet; those choices save in the character JSON / browser storage.
+ *
+ * Edit this file only if you are redistributing a different default campaign.
  * Banner path is relative to pages under playbooks/ (so "../assets/...").
- *
- * Keep banners reasonably small (this one is ~400KB) so email zips stay light.
+ * Keep default banners reasonably small so email zips stay light.
  */
 window.AL = window.AL || {};
 
 AL.CAMPAIGN = {
-  /** Display name on the Session notes section */
+  /** Default display name (overridable on the sheet) */
   name: "Iron and Ash",
   /**
-   * Optional banner shown at the top of Session notes (when expanded).
-   * Use a path relative to playbooks/*.html
+   * Default banner image. Empty string = no default art (players can still upload).
+   * Path relative to playbooks/*.html
    */
   bannerSrc: "../assets/iron-and-ash-banner.png",
-  /** Short line under the banner */
+  /** Default caption under the banner */
   tagline: "Campaign session log"
 };

@@ -104,6 +104,47 @@
     };
   }
 
+  /**
+   * Campaign banner branding stored per character (so each table can differ).
+   * mode: "default" uses AL.CAMPAIGN from data/campaign.js
+   *       "custom"  uses bannerDataUrl (+ optional name/tagline overrides)
+   *       "hidden"  no banner image (name still optional in summary)
+   */
+  function defaultCampaignBrand() {
+    return {
+      mode: "default",
+      name: "",
+      tagline: "",
+      bannerDataUrl: ""
+    };
+  }
+
+  function packageCampaign() {
+    return AL.CAMPAIGN || { name: "", tagline: "", bannerSrc: "" };
+  }
+
+  /** Resolved name/tagline/image for UI (respects mode) */
+  function resolveCampaignBrand(state) {
+    const pkg = packageCampaign();
+    const brand = state.campaign || defaultCampaignBrand();
+    const mode = brand.mode || "default";
+    const name = (brand.name && brand.name.trim()) || pkg.name || "Campaign";
+    const tagline = (brand.tagline && brand.tagline.trim()) || pkg.tagline || "";
+    let imageSrc = "";
+    let visible = false;
+    if (mode === "hidden") {
+      visible = false;
+    } else if (mode === "custom") {
+      imageSrc = brand.bannerDataUrl || "";
+      visible = !!imageSrc;
+    } else {
+      // default
+      imageSrc = pkg.bannerSrc || "";
+      visible = !!imageSrc;
+    }
+    return { mode, name, tagline, imageSrc, visible };
+  }
+
   function defaultState(pb) {
     return {
       name: "",
@@ -116,6 +157,7 @@
       demeanor: "",
       portraitDataUrl: "",
       backstory: "",
+      campaign: defaultCampaignBrand(),
       stats: { ...pb.baseStats },
       creationBonusStat: "",
       balance: 0,
@@ -172,6 +214,7 @@
     if (merged.playerName == null) merged.playerName = "";
     if (merged.backstory == null) merged.backstory = "";
     if (merged.portraitDataUrl == null) merged.portraitDataUrl = "";
+    merged.campaign = { ...defaultCampaignBrand(), ...(raw.campaign || {}) };
     if (Array.isArray(merged.techniques)) {
       merged.techniques = compactTechniques(pb, merged.techniques);
     } else {
@@ -1648,17 +1691,21 @@
   }
 
   /**
-   * Session notes section: campaign banner + per-session log entries.
-   * Banner comes from AL.CAMPAIGN (data/campaign.js); session art is per-character JSON.
+   * Session notes section: optional campaign banner + per-session log entries.
+   * Default banner: data/campaign.js. Players may hide it or upload their own
+   * (stored on the character as state.campaign).
    */
   function renderSessionsSection(state) {
+    if (!state.campaign) state.campaign = defaultCampaignBrand();
     const expanded = state.ui.sessionsExpanded !== false;
     const n = (state.sessions || []).length;
-    const campaignName = (AL.CAMPAIGN && AL.CAMPAIGN.name) || "Campaign";
+    const resolved = resolveCampaignBrand(state);
     const summaryEl = document.createElement("div");
     const sumLine = document.createElement("span");
     sumLine.className = "sum-line";
-    sumLine.textContent = `${campaignName} · ${n === 1 ? "1 session" : n + " sessions"}`;
+    const modeNote =
+      resolved.mode === "hidden" ? " · no banner" : resolved.mode === "custom" ? " · custom banner" : "";
+    sumLine.textContent = `${resolved.name} · ${n === 1 ? "1 session" : n + " sessions"}${modeNote}`;
     summaryEl.appendChild(sumLine);
 
     return makeSection(
@@ -1667,23 +1714,7 @@
       expanded,
       summaryEl,
       (body) => {
-        // --- Campaign banner (shared graphic for the table) ---
-        if (AL.CAMPAIGN && AL.CAMPAIGN.bannerSrc) {
-          const banner = document.createElement("div");
-          banner.className = "campaign-banner";
-          const img = document.createElement("img");
-          img.src = AL.CAMPAIGN.bannerSrc;
-          img.alt = AL.CAMPAIGN.name || "Campaign banner";
-          img.loading = "lazy";
-          banner.appendChild(img);
-          if (AL.CAMPAIGN.tagline) {
-            const cap = document.createElement("div");
-            cap.className = "campaign-banner-caption";
-            cap.textContent = AL.CAMPAIGN.tagline;
-            banner.appendChild(cap);
-          }
-          body.appendChild(banner);
-        }
+        body.appendChild(renderCampaignBannerControls(state, resolved));
 
         body.appendChild(
           Object.assign(document.createElement("p"), {
@@ -1714,6 +1745,156 @@
         }
       }
     );
+  }
+
+  /** Banner preview + mode/name controls (default package art, custom upload, or hidden) */
+  function renderCampaignBannerControls(state, resolved) {
+    const wrap = document.createElement("div");
+    wrap.className = "campaign-brand-block";
+
+    // Preview
+    if (resolved.visible && resolved.imageSrc) {
+      const banner = document.createElement("div");
+      banner.className = "campaign-banner";
+      const img = document.createElement("img");
+      img.src = resolved.imageSrc;
+      img.alt = resolved.name || "Campaign banner";
+      img.loading = "lazy";
+      banner.appendChild(img);
+      if (resolved.tagline) {
+        const cap = document.createElement("div");
+        cap.className = "campaign-banner-caption";
+        cap.textContent = resolved.tagline;
+        banner.appendChild(cap);
+      }
+      wrap.appendChild(banner);
+    } else if (resolved.mode === "hidden") {
+      const empty = document.createElement("div");
+      empty.className = "campaign-banner-empty";
+      empty.textContent = "Campaign banner hidden";
+      wrap.appendChild(empty);
+    } else if (resolved.mode === "custom" && !resolved.imageSrc) {
+      const empty = document.createElement("div");
+      empty.className = "campaign-banner-empty";
+      empty.textContent = "Custom banner: upload an image below";
+      wrap.appendChild(empty);
+    }
+
+    // Mode radios
+    const modeRow = document.createElement("div");
+    modeRow.className = "campaign-mode-row";
+    const modes = [
+      { id: "default", label: "Package default" },
+      { id: "custom", label: "My image" },
+      { id: "hidden", label: "No banner" }
+    ];
+    modes.forEach((m) => {
+      const lab = document.createElement("label");
+      lab.className = "campaign-mode-chip" + (resolved.mode === m.id ? " is-active" : "");
+      const radio = document.createElement("input");
+      radio.type = "radio";
+      radio.name = "campaign-banner-mode";
+      radio.value = m.id;
+      radio.checked = resolved.mode === m.id;
+      radio.addEventListener("change", () => {
+        if (!radio.checked) return;
+        state.campaign.mode = m.id;
+        scheduleSave();
+        refresh();
+      });
+      lab.appendChild(radio);
+      lab.appendChild(document.createTextNode(m.label));
+      modeRow.appendChild(lab);
+    });
+    wrap.appendChild(modeRow);
+
+    // Name / tagline (always editable; empty = fall back to package defaults when mode is default)
+    const fields = document.createElement("div");
+    fields.className = "row-fields campaign-brand-fields";
+    fields.appendChild(
+      field(
+        "Campaign name",
+        textInput(
+          state.campaign.name || "",
+          (v) => {
+            state.campaign.name = v;
+            scheduleSave();
+          },
+          packageCampaign().name || "Campaign name"
+        )
+      )
+    );
+    fields.appendChild(
+      field(
+        "Banner caption",
+        textInput(
+          state.campaign.tagline || "",
+          (v) => {
+            state.campaign.tagline = v;
+            scheduleSave();
+          },
+          packageCampaign().tagline || "Optional caption"
+        )
+      )
+    );
+    wrap.appendChild(fields);
+
+    // Custom image actions
+    if (resolved.mode === "custom") {
+      const actions = document.createElement("div");
+      actions.className = "campaign-banner-actions";
+      const file = document.createElement("input");
+      file.type = "file";
+      file.accept = "image/*";
+      file.hidden = true;
+      file.addEventListener("change", () => {
+        readImageFile(file.files && file.files[0], (dataUrl) => {
+          state.campaign.bannerDataUrl = dataUrl;
+          state.campaign.mode = "custom";
+          scheduleSave();
+          refresh();
+        });
+      });
+      const upload = document.createElement("button");
+      upload.type = "button";
+      upload.className = "btn";
+      upload.textContent = state.campaign.bannerDataUrl ? "Change banner image" : "Upload banner image";
+      upload.addEventListener("click", () => file.click());
+      actions.appendChild(upload);
+      if (state.campaign.bannerDataUrl) {
+        const clear = document.createElement("button");
+        clear.type = "button";
+        clear.className = "btn";
+        clear.style.background = "var(--danger)";
+        clear.textContent = "Clear custom image";
+        clear.addEventListener("click", () => {
+          if (!confirm("Remove your custom campaign banner image?")) return;
+          state.campaign.bannerDataUrl = "";
+          scheduleSave();
+          refresh();
+        });
+        actions.appendChild(clear);
+      }
+      actions.appendChild(file);
+      wrap.appendChild(actions);
+      wrap.appendChild(
+        Object.assign(document.createElement("p"), {
+          className: "hint",
+          textContent:
+            "Custom banners are stored in this character’s JSON (keep under ~2.5 MB). Other tables can hide the Iron and Ash default with “No banner”."
+        })
+      );
+    } else if (resolved.mode === "default") {
+      wrap.appendChild(
+        Object.assign(document.createElement("p"), {
+          className: "hint",
+          textContent:
+            "Using the package default banner (editable in data/campaign.js for redistributors). Choose “My image” or “No banner” to customize for your table."
+        })
+      );
+    }
+
+    return wrap;
   }
 
   /** One session card: collapsible head + optional left image + fields */

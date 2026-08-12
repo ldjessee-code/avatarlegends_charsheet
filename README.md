@@ -32,9 +32,22 @@ Works **offline** — open the files in a browser. No install, no web server.
 | Autosave | Stays in *this* browser on *this* computer only |
 | Download JSON | Portable file — backup, email GM, switch machines |
 | Images | Portrait + session art embed in the JSON — keep under ~2.5 MB each |
+| Campaign banner | Session notes: **Package default**, **My image**, or **No banner** |
 | Training | Changes the sheet color theme (Fire, Water, Earth, Air, Weapons, Tech) |
 | Collapse | Section headers collapse for play; click ▾/▸ to expand |
 | Print | Use the Print button (toolbar hides on paper) |
+
+### Phones, tablets, and “can I use my Switch?”
+
+| Device | Expectation |
+|--------|-------------|
+| **iPhone / iPad (Safari)** | **Yes** — use the GitHub Pages link (not a zip on Files, if you can help it). Add to Home Screen optional. Prefer collapsed sections at the table. **Download JSON** works; AirDrop/Files the backup to the GM. |
+| **Android phone/tablet** | Same as above in Chrome. |
+| **Laptop / desktop** | Best for character creation and long typing. |
+| **Nintendo Switch / Switch 2** | **Not supported** (joke OK, reality no). Console browsers are limited, awkward for file save/load, and a poor fit for this kind of web app. Use a phone or tablet instead. |
+
+**Why Pages beats a zip on iOS:** opening multi-file HTML from the Files app often breaks relative CSS/JS paths.  
+**https://ldjessee-code.github.io/avatarlegends_charsheet/** loads everything correctly.
 
 ### Emailing the GM
 
