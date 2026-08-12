@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<!--
+  index.html — Playbook hub / landing page
+  Open this file (or a playbooks/*.html sheet) directly in a browser.
+  No server required.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Avatar Legends — Digital Character Sheets</title>
+  <link rel="stylesheet" href="css/sheet.css" />
+  <style>
+    .hub {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1rem 3rem;
+    }
+    .hub h1 {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      margin: 0 0 0.35rem;
+      color: var(--ink);
+    }
+    .hub .lead {
+      color: var(--ink-soft);
+      max-width: 40rem;
+      margin-bottom: 1.5rem;
+    }
+    .playbook-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 0.75rem;
+    }
+    .pb-card {
+      display: block;
+      padding: 1rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: var(--card);
+      text-decoration: none;
+      color: inherit;
+      box-shadow: var(--shadow);
+      transition: transform 0.12s, border-color 0.12s;
+    }
+    .pb-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+    }
+    .pb-card.ready {
+      border-left: 4px solid var(--accent-3);
+    }
+    .pb-card.soon {
+      opacity: 0.65;
+      pointer-events: none;
+    }
+    .pb-card h2 {
+      margin: 0 0 0.25rem;
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      color: var(--accent);
+      border: none;
+      padding: 0;
+      text-transform: none;
+      letter-spacing: normal;
+    }
+    .pb-card .src {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+    }
+    .pb-card .badge {
+      display: inline-block;
+      margin-top: 0.5rem;
+      font-size: 0.72rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--accent-3) 18%, white);
+      color: #1f4d2a;
+      font-weight: 700;
+    }
+    .pb-card.soon .badge {
+      background: var(--paper-2);
+      color: var(--muted);
+    }
+    .callout {
+      background: #fff8ef;
+      border: 1px solid var(--gold);
+      border-radius: var(--radius);
+      padding: 1rem 1.1rem;
+      margin: 1.5rem 0;
+      font-size: 0.95rem;
+    }
+    .callout h3 {
+      margin: 0 0 0.4rem;
+      color: var(--accent);
+      font-family: var(--font-display);
+    }
+  </style>
+</head>
+<body>
+  <div class="hub">
+    <h1>Avatar Legends</h1>
+    <p class="lead">
+      Digital HTML/CSS/JS character sheets for Powered by the Apocalypse playbooks
+      from the Core Book and Wan Shi Tong’s Adventure Guide.
+    </p>
+
+    <div class="callout">
+      <h3>Example ready for review: The Adamant</h3>
+      <p style="margin:0">
+        Open <strong>The Adamant</strong> below. Character name is primary in the header; playbook is secondary on the right.
+        Collapsible sections (history, growth, sessions…), training-based color themes,
+        portrait image, and <strong>Save to file / Load from file</strong> (plus browser auto-save).
+        Start here if you only opened a playbook page before — this is the playbook picker.
+      </p>
+    </div>
+
+    <h2 style="font-family:var(--font-display);color:var(--accent-2)">Core Book</h2>
+    <div class="playbook-list" style="margin-bottom:1.5rem">
+      <a class="pb-card ready" href="playbooks/adamant.html">
+        <div class="src">Core Book</div>
+        <h2>The Adamant</h2>
+        <span class="badge">Example ready</span>
+      </a>
+      <div class="pb-card soon"><div class="src">Core Book</div><h2>The Bold</h2><span class="badge">Pending approval</span></div>
+      <div class="pb-card soon"><div class="src">Core Book</div><h2>The Guardian</h2><span class="badge">Pending approval</span></div>
+      <div class="pb-card soon"><div class="src">Core Book</div><h2>The Hammer</h2><span class="badge">Pending approval</span></div>
+      <div class="pb-card soon"><div class="src">Core Book</div><h2>The Icon</h2><span class="badge">Pending approval</span></div>
+      <div class="pb-card soon"><div class="src">Core Book</div><h2>The Idealist</h2><span class="badge">Pending approval</span></div>
+      <div class="pb-card soon"><div class="src">Core Book</div><h2>The Pillar</h2><span class="badge">Pending approval</span></div>
+      <div class="pb-card soon"><div class="src">Core Book</div><h2>The Prodigy</h2><span class="badge">Pending approval</span></div>
+      <div class="pb-card soon"><div class="src">Core Book</div><h2>The Rogue</h2><span class="badge">Pending approval</span></div>
+      <div class="pb-card soon"><div class="src">Core Book</div><h2>The Successor</h2><span class="badge">Pending approval</span></div>
+    </div>
+
+    <h2 style="font-family:var(--font-display);color:var(--accent-2)">Wan Shi Tong’s Adventure Guide</h2>
+    <div class="playbook-list">
+      <div class="pb-card soon"><div class="src">WST Adventure Guide</div><h2>The Destined</h2><span class="badge">Pending approval</span></div>
+      <div class="pb-card soon"><div class="src">WST Adventure Guide</div><h2>The Elder</h2><span class="badge">Pending approval</span></div>
+      <div class="pb-card soon"><div class="src">WST Adventure Guide</div><h2>The Foundling</h2><span class="badge">Pending approval</span></div>
+      <div class="pb-card soon"><div class="src">WST Adventure Guide</div><h2>The Razor</h2><span class="badge">Pending approval</span></div>
+    </div>
+
+    <p class="footer-note" style="margin-top:2rem">
+      Unofficial fan tool for personal use. See <a href="NOTICE.md">NOTICE.md</a> and <a href="README.md">README.md</a>.
+      Avatar Legends and related marks ©
+      <a href="https://www.viacomcbs.com/" target="_blank" rel="noopener noreferrer">Viacom</a> International Inc.
+      Game system by
+      <a href="https://magpiegames.com/" target="_blank" rel="noopener noreferrer">Magpie Games</a>.
+    </p>
+  </div>
+</body>
+</html>

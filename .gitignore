@@ -1,0 +1,11 @@
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/
+*.swp
+*~
+# Local scratch / PDF extracts (keep the shipped sheet lean)
+/tmp/
+playbooks_raw.json
+data/playbooks_raw.json
