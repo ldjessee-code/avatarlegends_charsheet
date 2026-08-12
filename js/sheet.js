@@ -2203,24 +2203,90 @@
 
   // ---------- File I/O ----------
 
+  /**
+   * Peel base64 data-URLs out of character state so JSON exports stay readable.
+   * Returns { character, images } — images are reattached on import.
+   *
+   * images shape (all keys optional):
+   *   portraitDataUrl
+   *   campaignBannerDataUrl
+   *   sessions: { [sessionId]: dataUrl }
+   */
+  function splitCharacterImages(state) {
+    const character = JSON.parse(JSON.stringify(state || {}));
+    const images = {};
+
+    if (character.portraitDataUrl) {
+      images.portraitDataUrl = character.portraitDataUrl;
+      character.portraitDataUrl = "";
+    }
+
+    if (character.campaign && character.campaign.bannerDataUrl) {
+      images.campaignBannerDataUrl = character.campaign.bannerDataUrl;
+      character.campaign.bannerDataUrl = "";
+    }
+
+    if (Array.isArray(character.sessions)) {
+      const sessionImgs = {};
+      character.sessions.forEach((s) => {
+        if (s && s.imageDataUrl) {
+          const key = s.id || "unknown";
+          sessionImgs[key] = s.imageDataUrl;
+          s.imageDataUrl = "";
+        }
+      });
+      if (Object.keys(sessionImgs).length) images.sessions = sessionImgs;
+    }
+
+    return { character, images };
+  }
+
+  /** Merge bottom-of-file images block (or keep inline images from older exports). */
+  function mergeCharacterImages(charData, images) {
+    const c = JSON.parse(JSON.stringify(charData || {}));
+    if (!images || typeof images !== "object") return c;
+
+    if (images.portraitDataUrl) c.portraitDataUrl = images.portraitDataUrl;
+
+    if (images.campaignBannerDataUrl) {
+      c.campaign = c.campaign || {};
+      c.campaign.bannerDataUrl = images.campaignBannerDataUrl;
+    }
+
+    if (images.sessions && Array.isArray(c.sessions)) {
+      c.sessions.forEach((s) => {
+        if (s && s.id && images.sessions[s.id]) {
+          s.imageDataUrl = images.sessions[s.id];
+        }
+      });
+    }
+
+    return c;
+  }
+
   function exportJson() {
     const pagesBase = "https://ldjessee-code.github.io/avatarlegends_charsheet";
+    const { character, images } = splitCharacterImages(currentState);
+
+    // Property order matters for human reading: meta → character → images last
     const payload = {
       _meta: {
         app: "avatar-legends-charsheet",
-        version: 2,
+        version: 3,
         playbookId: currentPb.id,
         playbookName: currentPb.name,
         exportedAt: new Date().toISOString(),
-        /** Source code */
         repoUrl: "https://github.com/ldjessee-code/avatarlegends_charsheet",
-        /** Live sheets hub */
         pagesUrl: pagesBase + "/",
-        /** Direct link to this playbook’s sheet (open, then Load JSON if needed) */
-        playbookUrl: pagesBase + "/playbooks/" + currentPb.id + ".html"
+        playbookUrl: pagesBase + "/playbooks/" + currentPb.id + ".html",
+        note: "Binary images (if any) are stored under top-level \"images\" at the end of this file."
       },
-      character: currentState
+      character: character
     };
+    if (Object.keys(images).length) {
+      payload.images = images;
+    }
+
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
@@ -2238,6 +2304,10 @@
         const data = JSON.parse(reader.result);
         let charData = data;
         if (data && data.character) charData = data.character;
+        // v3+: images live at the bottom; older files keep data-URLs inline
+        if (data && data.images) {
+          charData = mergeCharacterImages(charData, data.images);
+        }
         if (data && data._meta && data._meta.playbookId && data._meta.playbookId !== currentPb.id) {
           const ok = confirm(
             `This file is for playbook “${data._meta.playbookName || data._meta.playbookId}”, but this page is ${currentPb.name}. Load anyway?`
