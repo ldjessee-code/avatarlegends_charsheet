@@ -6,6 +6,19 @@ Works **offline** — open the files in a browser. No install, no web server.
 > **Fan tool only.** Not affiliated with Magpie Games or Viacom.  
 > See [NOTICE.md](NOTICE.md) for trademarks and use.
 
+## Documentation (`docs/`)
+
+Open-source style: longer docs live in **[docs/](docs/)**.
+
+| Doc | Contents |
+|-----|----------|
+| [docs/index.html](docs/index.html) | Browse on the live site / offline |
+| [Accessibility](docs/accessibility.md) | Goals, status, how to report issues |
+| [Character JSON](docs/character-json.md) | Export format, versions, images block |
+| [AI & automation](docs/ai-automation.md) | Prefer JSON + documented actions |
+
+GitHub renders the `.md` files in the repo; GitHub Pages serves `docs/index.html`.
+
 ---
 
 ## For players (quick start)

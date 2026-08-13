@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Documentation — Avatar Legends Character Sheets</title>
+  <link rel="stylesheet" href="../css/sheet.css" />
+  <style>
+    .docs {
+      max-width: 42rem;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 3rem;
+    }
+    .docs h1 {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      margin: 0 0 0.5rem;
+      color: var(--ink);
+    }
+    .docs .lead {
+      color: var(--ink-soft);
+      margin-bottom: 1.25rem;
+    }
+    .docs-nav {
+      display: grid;
+      gap: 0.75rem;
+      margin: 1.25rem 0;
+    }
+    .docs-nav a {
+      display: block;
+      padding: 0.85rem 1rem;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--accent);
+      border-radius: var(--radius);
+      background: var(--card);
+      text-decoration: none;
+      color: inherit;
+      box-shadow: var(--shadow);
+    }
+    .docs-nav a:hover {
+      border-color: var(--accent);
+    }
+    .docs-nav strong {
+      display: block;
+      color: var(--accent);
+      font-family: var(--font-display);
+      margin-bottom: 0.25rem;
+    }
+    .docs-nav span {
+      font-size: 0.9rem;
+      color: var(--ink-soft);
+    }
+    .docs article {
+      margin-top: 2rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--line);
+    }
+    .docs article h2 {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      color: var(--accent);
+      margin: 0 0 0.75rem;
+    }
+    .docs article h3 {
+      font-size: 1rem;
+      margin: 1.1rem 0 0.4rem;
+      color: var(--accent-2);
+    }
+    .docs article p, .docs article li {
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    .docs article ul {
+      padding-left: 1.25rem;
+    }
+    .docs table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      margin: 0.75rem 0;
+    }
+    .docs th, .docs td {
+      border: 1px solid var(--line);
+      padding: 0.4rem 0.5rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    .docs th {
+      background: var(--paper-2);
+    }
+    .docs code {
+      font-size: 0.85em;
+      background: var(--paper-2);
+      padding: 0.1rem 0.3rem;
+      border-radius: 3px;
+    }
+    .docs pre {
+      background: var(--paper-2);
+      padding: 0.75rem;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-size: 0.8rem;
+    }
+    .back {
+      display: inline-block;
+      margin-bottom: 1rem;
+      color: var(--accent-2);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="docs">
+    <a class="back" href="../index.html">← All playbooks</a>
+    <h1>Documentation</h1>
+    <p class="lead">
+      Phase 0: policy and contracts for accessibility, character JSON, and AI/automation.
+      Source Markdown also lives in this folder for GitHub browsing.
+    </p>
+
+    <nav class="docs-nav" aria-label="Documentation topics">
+      <a href="#accessibility">
+        <strong>Accessibility</strong>
+        <span>Goals, current status, reporting issues, roadmap</span>
+      </a>
+      <a href="#character-json">
+        <strong>Character JSON</strong>
+        <span>Export format, version 3 images block, compatibility</span>
+      </a>
+      <a href="#ai-automation">
+        <strong>AI &amp; automation</strong>
+        <span>Prefer JSON + documented actions; no system App Intents</span>
+      </a>
+    </nav>
+
+    <p class="hint">
+      Open source convention: long-form docs in <code>docs/</code>, overview in the root README.
+      GitHub renders <code>.md</code> files; this page is for GitHub Pages / offline reading.
+    </p>
+
+    <!-- ========== Accessibility (inline for Pages) ========== -->
+    <article id="accessibility">
+      <h2>Accessibility statement</h2>
+      <p>
+        Unofficial fan project for Avatar Legends character sheets (static HTML/CSS/JS).
+        Not affiliated with Magpie Games or Viacom/Paramount.
+      </p>
+      <h3>Goals</h3>
+      <ul>
+        <li>Screen reader users (VoiceOver, TalkBack, NVDA, JAWS)</li>
+        <li>Keyboard-only and limited-mobility users</li>
+        <li>Reduced motion / clearer structure</li>
+        <li>Large text, zoom, and mobile browsers</li>
+      </ul>
+      <p>
+        Accessibility work should improve structure, names, and keyboard behavior
+        <strong>without</strong> redesigning the visual theme unless contrast or size fails basic readability.
+      </p>
+      <h3>Current status (honest)</h3>
+      <table>
+        <thead><tr><th>Area</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>GitHub Pages / offline</td><td>Supported</td></tr>
+          <tr><td>Mobile browsers</td><td>Supported (prefer Pages URL on iOS)</td></tr>
+          <tr><td>Keyboard / screen reader audit</td><td>Planned (Phase 1)</td></tr>
+          <tr><td>Full WCAG 2.2 AA claim</td><td>Not claimed</td></tr>
+          <tr><td>i18n</td><td>English only for now</td></tr>
+          <tr><td>Native App Intents</td><td>Out of scope (web); possible future iOS app</td></tr>
+        </tbody>
+      </table>
+      <h3>Reporting issues</h3>
+      <p>
+        Open an issue on
+        <a href="https://github.com/ldjessee-code/avatarlegends_charsheet">GitHub</a>
+        with device, browser, assistive tech, URL, and steps.
+      </p>
+      <h3>Roadmap</h3>
+      <ul>
+        <li><strong>Phase 0</strong> — this documentation</li>
+        <li><strong>Phase 1</strong> — ARIA, labels, alt, live regions, keyboard</li>
+        <li><strong>Phase 2</strong> — Share/Copy JSON, comfort options</li>
+        <li><strong>Phase 3</strong> — i18n plumbing (reviewed languages only)</li>
+        <li><strong>Phase 4</strong> — optional command palette / local tools</li>
+      </ul>
+      <p>Full Markdown: <a href="https://github.com/ldjessee-code/avatarlegends_charsheet/blob/main/docs/accessibility.md">accessibility.md</a></p>
+    </article>
+
+    <article id="character-json">
+      <h2>Character JSON format</h2>
+      <p>
+        <strong>Download JSON</strong> produces a portable character file.
+        Prefer this for backups, email to the GM, and automation.
+      </p>
+      <h3>Top-level shape (v3+)</h3>
+      <pre>{
+  "_meta": { },
+  "character": { },
+  "images": { }
+}</pre>
+      <p>
+        Images (base64 data-URLs) live under <code>images</code> at the <strong>end</strong> so the rest stays readable.
+        Older files may still have inline images; Load JSON accepts both.
+      </p>
+      <h3>Version</h3>
+      <table>
+        <thead><tr><th>version</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>2</td><td>Meta URLs; images often inline</td></tr>
+          <tr><td>3</td><td>Top-level <code>images</code> block</td></tr>
+        </tbody>
+      </table>
+      <p>
+        Session <code>playDate</code> is the user’s <strong>local</strong> calendar date (<code>YYYY-MM-DD</code>), not UTC midnight.
+      </p>
+      <p>Full Markdown: <a href="https://github.com/ldjessee-code/avatarlegends_charsheet/blob/main/docs/character-json.md">character-json.md</a></p>
+    </article>
+
+    <article id="ai-automation">
+      <h2>AI &amp; automation</h2>
+      <p>
+        Prefer structured JSON and documented actions over vision-based UI clicking or fragile CSS selectors.
+      </p>
+      <h3>Today</h3>
+      <ul>
+        <li>Export / import character JSON (versioned contract)</li>
+        <li>Stable playbook URLs under <code>/playbooks/&lt;id&gt;.html</code></li>
+        <li>No public HTTP API on GitHub Pages</li>
+      </ul>
+      <h3>Conceptual verbs</h3>
+      <p>
+        Helpers should think in operations such as
+        <code>load_character</code>, <code>export_character</code>,
+        <code>set_fatigue</code>, <code>toggle_condition</code>,
+        <code>add_session_note</code> — implemented later as UI commands or local tools, not system App Intents.
+      </p>
+      <h3>Out of scope for now</h3>
+      <p>
+        Native iOS App Intents / Android App Actions. A Swift app can reuse the same JSON later if needed.
+      </p>
+      <p>Full Markdown: <a href="https://github.com/ldjessee-code/avatarlegends_charsheet/blob/main/docs/ai-automation.md">ai-automation.md</a></p>
+    </article>
+
+    <p class="footer-note">
+      Unofficial fan tool. See <a href="../NOTICE.md">NOTICE.md</a>.
+      Game by <a href="https://magpiegames.com/">Magpie Games</a>; marks © Viacom / Paramount family.
+    </p>
+  </div>
+</body>
+</html>
