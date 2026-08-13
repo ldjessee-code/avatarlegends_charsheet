@@ -2476,17 +2476,21 @@
     const payload = {
       _meta: {
         app: "avatar-legends-charsheet",
-        /** JSON export layout version (not the same as app UI version) */
-        version: 3,
-        /** App UI version from data/version.js */
+        /** App UI version (footer) — e.g. "2.2". Not the same as exportFormat. */
         appVersion: (window.AL && AL.VERSION) || "",
+        /**
+         * Character file layout number (1, 2, 3…).
+         * Independent of appVersion. 3 = images at end under top-level "images".
+         * Older files used "version" for this; Load still accepts that.
+         */
+        exportFormat: 3,
         playbookId: currentPb.id,
         playbookName: currentPb.name,
         exportedAt: new Date().toISOString(),
         repoUrl: "https://github.com/ldjessee-code/avatarlegends_charsheet",
         pagesUrl: pagesBase + "/",
         playbookUrl: pagesBase + "/playbooks/" + currentPb.id + ".html",
-        note: "Binary images (if any) are stored under top-level \"images\" at the end of this file."
+        note: "Binary images (if any) are under top-level \"images\". appVersion is the UI; exportFormat is this file layout."
       },
       character: character
     };

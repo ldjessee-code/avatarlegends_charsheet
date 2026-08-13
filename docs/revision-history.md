@@ -2,9 +2,14 @@
 
 Past releases only. This is not a roadmap and does not promise future work.
 
-Current version: **2.2** (see `data/version.js`).
+Current version: **2.3** (see `data/version.js`).
 
 ---
+
+## 2.3
+
+- Clarified naming: app version (`appVersion` / footer) vs JSON **export format** (`exportFormat`)
+- Docs no longer say “version 3” for the JSON layout (that was confusing with app v2.x)
 
 ## 2.2
 
@@ -34,7 +39,7 @@ Feature growth after first GitHub Pages publish, including (not exhaustive):
 
 - Full Core Book, Wan Shi Tong’s, and Uncle Iroh’s playbook set
 - Training themes, collapsible sections, session notes, campaign banner options
-- Character JSON export/import; images moved to a bottom `images` block (v3 export)
+- Character JSON export/import; images moved to a bottom `images` block (export format 3)
 - Local calendar date for new session notes (not UTC “tomorrow”)
 - Offline install guide, home-screen icon guide (iPhone / iPad / Android)
 - Player habit: Download JSON and email the GM after each session

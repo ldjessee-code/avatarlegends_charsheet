@@ -140,7 +140,7 @@
       </a>
       <a href="#character-json">
         <strong>Character JSON</strong>
-        <span>Export format, version 3 images block, compatibility</span>
+        <span>File layout (exportFormat), images block, vs app version</span>
       </a>
       <a href="#ai-automation">
         <strong>AI &amp; automation</strong>
@@ -190,7 +190,16 @@
         <strong>Download JSON</strong> produces a portable character file.
         Prefer this for backups, email to the GM, and automation.
       </p>
-      <h3>Top-level shape (v3+)</h3>
+      <h3>App version vs export format</h3>
+      <table>
+        <thead><tr><th>Name</th><th>Example</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><strong>App version</strong> (footer, <code>appVersion</code>)</td><td>2.2</td><td>UI release of the sheets</td></tr>
+          <tr><td><strong>Export format</strong> (<code>exportFormat</code>)</td><td>3</td><td>How this JSON file is laid out</td></tr>
+        </tbody>
+      </table>
+      <p>These number series are <strong>independent</strong>. Do not treat export format 3 as “app v3.”</p>
+      <h3>Top-level shape (export format 3+)</h3>
       <pre>{
   "_meta": { },
   "character": { },
@@ -200,9 +209,9 @@
         Images (base64 data-URLs) live under <code>images</code> at the <strong>end</strong> so the rest stays readable.
         Older files may still have inline images; Load JSON accepts both.
       </p>
-      <h3>Version</h3>
+      <h3>Export format numbers</h3>
       <table>
-        <thead><tr><th>version</th><th>Notes</th></tr></thead>
+        <thead><tr><th>exportFormat</th><th>Notes</th></tr></thead>
         <tbody>
           <tr><td>2</td><td>Meta URLs; images often inline</td></tr>
           <tr><td>3</td><td>Top-level <code>images</code> block</td></tr>
