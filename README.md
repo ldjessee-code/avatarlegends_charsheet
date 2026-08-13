@@ -23,12 +23,30 @@ GitHub renders the `.md` files in the repo; GitHub Pages serves `docs/index.html
 
 ## For players (quick start)
 
-### Install (from your GM’s zip)
+### Option A — Online (easiest)
 
-1. Unzip the folder anywhere (Desktop, USB drive, Dropbox, etc.).
-2. Keep the folder structure intact (`css/`, `js/`, `data/`, `playbooks/`, `assets/`).
-3. Open **`index.html`** in Chrome, Firefox, Safari, or Edge  
-   **or** open your playbook directly, e.g. `playbooks/adamant.html`.
+Open: **https://ldjessee-code.github.io/avatarlegends_charsheet/**
+
+Works on phone, tablet, and computer. Use **Download JSON** to back up.
+
+### Option B — Offline on a computer (Windows / Mac / Linux)
+
+Same steps on every platform — no special installer:
+
+1. Get **`AvatarLegends-charsheet-offline.zip`** from your GM (email / shared drive).
+2. **Unzip** it (Windows: right-click → Extract All; Mac: double-click the zip).
+3. Open the folder and double-click **`index.html`** (Chrome, Firefox, Edge, or Safari).
+4. Keep the whole folder together (`css/`, `js/`, `data/`, `playbooks/`, …).
+
+Full walkthrough: [docs/install-offline.md](docs/install-offline.md) · [HTML](docs/install-offline.html)
+
+### Phone / tablet home screen icon
+
+- **iPhone / iPad:** Safari → Share → **Add to Home Screen**  
+- **Android:** Chrome → ⋮ → **Add to Home screen** / **Install app**  
+
+Details: [docs/home-screen.md](docs/home-screen.md) · [HTML](docs/home-screen.html)  
+(Prefer the **live site** for home screen icons; offline zip is best on a PC.)
 
 ### Make your character
 
@@ -72,17 +90,18 @@ GitHub renders the `.md` files in the repo; GitHub Pages serves `docs/index.html
 
 ## For the GM
 
-### Zip for players
+### Offline zip for players (local distribution — not required on GitHub)
 
-From the parent folder:
+Rebuild after sheet updates, then email the zip:
 
 ```bash
-cd /path/to/Avatar_RPG
-zip -r AvatarLegends-charsheet.zip charsheet \
-  -x "charsheet/.git/*" -x "charsheet/**/.DS_Store" -x "charsheet/data/playbooks_raw.json"
+cd /path/to/Avatar_RPG/charsheet
+zip -r ../AvatarLegends-charsheet-offline.zip . \
+  -x "*.git*" -x "**/.DS_Store" -x "**/.DS_Store*"
 ```
 
-Ship **`AvatarLegends-charsheet.zip`**. Players only need a browser.
+Creates **`AvatarLegends-charsheet-offline.zip`** next to the `charsheet` folder.  
+Players only need a browser — see [docs/install-offline.md](docs/install-offline.md).
 
 ### Campaign branding
 
@@ -102,13 +121,11 @@ Shown on the left when expanded; tiny thumb in the collapsed header if present.
 
 ### Current playbooks
 
-| Playbook | Source | Status |
-|----------|--------|--------|
-| The Adamant | Core | Ready |
-| The Bold | Core | Ready |
-| The Guardian | Core | Ready |
-| The Foundling | WST Adventure Guide | Ready |
-| Other Core + WSTAG | — | Planned (same engine) |
+| Set | Count | Status |
+|-----|-------|--------|
+| Core Book | 10 | Ready |
+| Wan Shi Tong’s Adventure Guide | 4 | Ready |
+| Uncle Iroh’s Adventure Guide | 4 | Ready |
 
 **Live hub:** https://ldjessee-code.github.io/avatarlegends_charsheet/
 
