@@ -51,6 +51,24 @@
     .pb-card.ready {
       border-left: 4px solid var(--accent-3);
     }
+    /* Utilitarian / advanced options — gray, distinct from playbook “game” cards */
+    .pb-card.utility {
+      border-left: 4px solid #6b7280;
+      background: linear-gradient(180deg, #f4f5f7 0%, #eceef1 100%);
+    }
+    .pb-card.utility:hover {
+      border-color: #4b5563;
+    }
+    .pb-card.utility h2 {
+      color: #374151;
+    }
+    .pb-card.utility .src {
+      color: #6b7280;
+    }
+    .pb-card.utility .badge {
+      background: #e5e7eb;
+      color: #374151;
+    }
     .pb-card h2 {
       margin: 0 0 0.25rem;
       font-family: var(--font-display);
@@ -76,6 +94,11 @@
       background: color-mix(in srgb, var(--accent-3) 18%, white);
       color: #1f4d2a;
       font-weight: 700;
+    }
+    .advanced-heading {
+      font-family: var(--font-display);
+      color: #4b5563;
+      margin-top: 2rem;
     }
     .callout {
       background: #fff8ef;
@@ -144,12 +167,12 @@
       <a class="pb-card ready" href="playbooks/broken.html"><div class="src">Uncle Iroh’s AG</div><h2>The Broken</h2><span class="badge">Ready</span></a>
     </div>
 
-    <h2 style="font-family:var(--font-display);color:var(--accent-2);margin-top:2rem">Advanced options</h2>
+    <h2 class="advanced-heading">Advanced options</h2>
     <p class="lead" style="margin-bottom:0.75rem;font-size:0.95rem">
-      Online play is the default. You can also run fully offline on a computer, or pin a home-screen icon on a phone or tablet.
+      Utilitarian helpers (not playbooks). Online play is the default; use these for offline PC install, home-screen icons, or docs.
     </p>
     <div class="playbook-list" style="margin-bottom:1rem">
-      <a class="pb-card ready" href="docs/install-offline.html">
+      <a class="pb-card utility" href="docs/install-offline.html">
         <div class="src">Offline</div>
         <h2>Install locally (no internet)</h2>
         <span class="badge">Windows · Mac · Linux</span>
@@ -157,7 +180,7 @@
           Unzip the offline pack from your GM, open <code>index.html</code> in a browser. No install wizard.
         </p>
       </a>
-      <a class="pb-card ready" href="docs/home-screen.html">
+      <a class="pb-card utility" href="docs/home-screen.html">
         <div class="src">Mobile</div>
         <h2>Home screen icon</h2>
         <span class="badge">iPhone · iPad · Android</span>
@@ -165,7 +188,7 @@
           Add to Home Screen (Safari on Apple, Chrome on Android) so the sheets open like an app icon.
         </p>
       </a>
-      <a class="pb-card ready" href="docs/index.html">
+      <a class="pb-card utility" href="docs/index.html">
         <div class="src">Docs</div>
         <h2>All documentation</h2>
         <span class="badge">JSON · a11y · more</span>
