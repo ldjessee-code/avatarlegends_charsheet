@@ -77,13 +77,26 @@
   }
 
   /**
+   * Calendar date in the user's local timezone as YYYY-MM-DD.
+   * Avoid Date#toISOString() which is UTC and flips to "tomorrow" after evening
+   * in the Americas (e.g. 9pm GMT-5 → already next day in GMT).
+   */
+  function localDateYMD(d) {
+    const dt = d || new Date();
+    const y = dt.getFullYear();
+    const m = String(dt.getMonth() + 1).padStart(2, "0");
+    const day = String(dt.getDate()).padStart(2, "0");
+    return y + "-" + m + "-" + day;
+  }
+
+  /**
    * New session note row.
    * imageDataUrl: optional cutscene / mood art (stored in character JSON).
    */
   function emptySession() {
     return {
       id: "s-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
-      playDate: new Date().toISOString().slice(0, 10),
+      playDate: localDateYMD(),
       title: "",
       notes: "",
       imageDataUrl: "",
