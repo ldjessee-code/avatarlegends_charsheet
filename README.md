@@ -27,7 +27,8 @@ GitHub renders the `.md` files in the repo; GitHub Pages serves `docs/index.html
 
 Open: **https://ldjessee-code.github.io/avatarlegends_charsheet/**
 
-Works on phone, tablet, and computer. Use **Download JSON** to back up.
+Works on phone, tablet, and computer.  
+**After every session:** tap **Download JSON** and **email the file to your GM** — shared backup and you’re both on the same page about the character.
 
 ### Option B — Offline on a computer (Windows / Mac / Linux)
 
@@ -53,15 +54,16 @@ Details: [docs/home-screen.md](docs/home-screen.md) · [HTML](docs/home-screen.h
 1. Pick your playbook from the hub (or open its HTML file).
 2. Fill name, player, training, history, moves, techniques, etc.
 3. Changes **autosave in this browser** (local storage).
-4. When you want a real backup or to email the GM: click **Download JSON**.
-5. Later: **Load JSON** on the same playbook page to restore.
+4. **After every session:** click **Download JSON** and **email that file to your GM**.  
+   That keeps a backup in email and keeps you both aligned on the character.
+5. Later (new phone, cleared browser, etc.): **Load JSON** on the same playbook page to restore.
 
 ### Tips
 
 | Topic | What to know |
 |--------|----------------|
 | Autosave | Stays in *this* browser on *this* computer only |
-| Download JSON | Portable file — backup, email GM, switch machines |
+| Download JSON | **After each session:** save the file and email your GM (backup + shared truth) |
 | Images | Portrait + session art embed in the JSON — keep under ~2.5 MB each |
 | Campaign banner | Session notes: **Package default**, **My image**, or **No banner** |
 | Training | Changes the sheet color theme (Fire, Water, Earth, Air, Weapons, Tech) |
@@ -80,11 +82,13 @@ Details: [docs/home-screen.md](docs/home-screen.md) · [HTML](docs/home-screen.h
 **Why Pages beats a zip on iOS:** opening multi-file HTML from the Files app often breaks relative CSS/JS paths.  
 **https://ldjessee-code.github.io/avatarlegends_charsheet/** loads everything correctly.
 
-### Emailing the GM
+### After each session (required habit)
 
-1. **Download JSON** after the session (or after major changes).
+1. **Download JSON** (right after play, while everything is fresh).
 2. Name the file clearly, e.g. `Sokka_Adamant_2026-08-12.json`.
-3. Attach to email. Optional: attach a screenshot if useful.
+3. **Email it to your GM.**  
+   That gives you both a backup in email and the same picture of the character.
+4. Optional: attach a screenshot if something is easier to show visually.
 
 ---
 

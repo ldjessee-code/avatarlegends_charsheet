@@ -28,7 +28,7 @@ An icon appears on the home screen. Tapping it opens the sheets in a full-screen
 **Notes**
 
 - Data is stored in Safari for that site (same as the browser).
-- Still use **Download JSON** for backups.
+- **After every session:** **Download JSON** and **email the file to your GM** (backup in email + shared character state).
 - After a major site update, you may need to open the URL in Safari again; the home screen shortcut usually still works.
 
 ---
@@ -50,7 +50,7 @@ Other Android browsers (Firefox, Edge, Samsung Internet) usually have a similar 
 **Notes**
 
 - Same origin storage as Chrome for that site.
-- Use **Download JSON** for backups and sharing with the GM.
+- **After every session:** **Download JSON** and **email the file to your GM**.
 
 ---
 

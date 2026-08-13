@@ -35,8 +35,10 @@ https://ldjessee-code.github.io/avatarlegends_charsheet/
 ### 3. Use offline
 
 - Character data **autosaves in that browser** on that device.
-- Use **Download JSON** to back up or email your GM (works offline; you need a way to send the file later).
-- **Load JSON** restores a backup.
+- **After every session:** **Download JSON** and **email the file to your GM**.  
+  That keeps a backup in email and keeps you both on the same page about the character.  
+  (Works offline; send the mail when you next have connectivity.)
+- **Load JSON** restores a backup on a new device or after clearing browser data.
 
 No server, no “install package.” It’s just files + a browser.
 
