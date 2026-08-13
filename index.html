@@ -131,9 +131,6 @@
         <a href="https://ldjessee-code.github.io/avatarlegends_charsheet/">GitHub Pages</a>.
         <strong>After every session:</strong> Download JSON and email the file to your GM —
         email backup plus you’re both on the same page about the character.
-        <br /><br />
-        <a href="docs/index.html"><strong>Documentation</strong></a>
-        (accessibility, character JSON, AI/automation) — also in the repo under <code>docs/</code>.
       </p>
     </div>
 
@@ -208,7 +205,16 @@
       <a href="https://www.viacomcbs.com/" target="_blank" rel="noopener noreferrer">Viacom</a> International Inc.
       Game system by
       <a href="https://magpiegames.com/" target="_blank" rel="noopener noreferrer">Magpie Games</a>.
+      <span id="footer-version"></span>
     </p>
   </div>
+  <script src="data/version.js"></script>
+  <script>
+    (function () {
+      var v = (window.AL && AL.VERSION) || "";
+      var f = document.getElementById("footer-version");
+      if (f && v) f.textContent = " · v" + v;
+    })();
+  </script>
 </body>
 </html>

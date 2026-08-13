@@ -2476,7 +2476,10 @@
     const payload = {
       _meta: {
         app: "avatar-legends-charsheet",
+        /** JSON export layout version (not the same as app UI version) */
         version: 3,
+        /** App UI version from data/version.js */
+        appVersion: (window.AL && AL.VERSION) || "",
         playbookId: currentPb.id,
         playbookName: currentPb.name,
         exportedAt: new Date().toISOString(),
@@ -2584,8 +2587,23 @@
     if (btnReset) btnReset.addEventListener("click", resetSheet);
 
     setupToolbarScroll();
+    injectAppVersion();
     refresh();
     setStatus("Ready");
+  }
+
+  /** Show AL.VERSION in the page footer (sheets + any page that includes version.js). */
+  function injectAppVersion() {
+    var v = (window.AL && AL.VERSION) || "";
+    if (!v) return;
+    var foot = document.querySelector("footer.footer-note, .footer-note");
+    if (!foot) return;
+    if (foot.querySelector(".app-version")) return;
+    var span = document.createElement("span");
+    span.className = "app-version";
+    span.textContent = " · v" + v;
+    span.setAttribute("aria-label", "Application version " + v);
+    foot.appendChild(span);
   }
 
   AL.Sheet = { init, loadState, saveState, defaultState };

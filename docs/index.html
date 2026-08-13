@@ -114,8 +114,15 @@
     <a class="back" href="../index.html">← All playbooks</a>
     <h1>Documentation</h1>
     <p class="lead">
-      Phase 0: policy and contracts for accessibility, character JSON, and AI/automation.
+      Guides for players and GMs: offline install, home screen icons, accessibility notes,
+      character JSON, and how tools should use this project.
       Source Markdown also lives in this folder for GitHub browsing.
+    </p>
+    <p class="hint" style="margin-bottom:1rem">
+      App version: <strong id="app-version">…</strong>
+      ·
+      <a href="revision-history.html">Revision history</a>
+      (past changes only)
     </p>
 
     <nav class="docs-nav" aria-label="Documentation topics">
@@ -129,7 +136,7 @@
       </a>
       <a href="#accessibility">
         <strong>Accessibility</strong>
-        <span>Goals, current status, reporting issues, roadmap</span>
+        <span>What works today; full notes in accessibility.md</span>
       </a>
       <a href="#character-json">
         <strong>Character JSON</strong>
@@ -137,7 +144,11 @@
       </a>
       <a href="#ai-automation">
         <strong>AI &amp; automation</strong>
-        <span>Prefer JSON + documented actions; no system App Intents</span>
+        <span>Prefer JSON + documented actions</span>
+      </a>
+      <a href="revision-history.html">
+        <strong>Revision history</strong>
+        <span>What already shipped — not a roadmap</span>
       </a>
     </nav>
 
@@ -146,51 +157,31 @@
       GitHub renders <code>.md</code> files; this page is for GitHub Pages / offline reading.
     </p>
 
-    <!-- ========== Accessibility (inline for Pages) ========== -->
+    <!-- ========== Accessibility summary ========== -->
     <article id="accessibility">
-      <h2>Accessibility statement</h2>
+      <h2>Accessibility</h2>
       <p>
-        Unofficial fan project for Avatar Legends character sheets (static HTML/CSS/JS).
-        Not affiliated with Magpie Games or Viacom/Paramount.
+        Unofficial fan sheets. Accessibility work aims to help screen readers, keyboard use,
+        reduced motion, and mobile — without changing the look of the sheet unless needed for readability.
       </p>
-      <h3>Goals</h3>
+      <h3>What has been done so far</h3>
       <ul>
-        <li>Screen reader users (VoiceOver, TalkBack, NVDA, JAWS)</li>
-        <li>Keyboard-only and limited-mobility users</li>
-        <li>Reduced motion / clearer structure</li>
-        <li>Large text, zoom, and mobile browsers</li>
+        <li>Landmarks (header / nav / main / footer) and a skip link</li>
+        <li>Section expand/collapse with clear accessible names and states</li>
+        <li>Labeled fatigue, growth, and balance controls</li>
+        <li>Meaningful <code>alt</code> text for portrait, campaign banner, and session art</li>
+        <li>Autosave status announced via a live region</li>
+        <li>Focus restored after the sheet re-renders</li>
+        <li>Respect for <code>prefers-reduced-motion</code></li>
       </ul>
       <p>
-        Accessibility work should improve structure, names, and keyboard behavior
-        <strong>without</strong> redesigning the visual theme unless contrast or size fails basic readability.
+        We do <strong>not</strong> claim full WCAG certification. Improvements are listed when they ship
+        in the <a href="revision-history.html">revision history</a>.
       </p>
-      <h3>Current status (honest)</h3>
-      <table>
-        <thead><tr><th>Area</th><th>Status</th></tr></thead>
-        <tbody>
-          <tr><td>GitHub Pages / offline</td><td>Supported</td></tr>
-          <tr><td>Mobile browsers</td><td>Supported (prefer Pages URL on iOS)</td></tr>
-          <tr><td>Keyboard / screen reader labels (Phase 1)</td><td>Shipped — please test with VoiceOver / NVDA</td></tr>
-          <tr><td>Full WCAG 2.2 AA claim</td><td>Not claimed</td></tr>
-          <tr><td>i18n</td><td>English only for now</td></tr>
-          <tr><td>Native App Intents</td><td>Out of scope (web); possible future iOS app</td></tr>
-        </tbody>
-      </table>
-      <h3>Reporting issues</h3>
       <p>
-        Open an issue on
-        <a href="https://github.com/ldjessee-code/avatarlegends_charsheet">GitHub</a>
-        with device, browser, assistive tech, URL, and steps.
+        Full Markdown:
+        <a href="https://github.com/ldjessee-code/avatarlegends_charsheet/blob/main/docs/accessibility.md">accessibility.md</a>
       </p>
-      <h3>Roadmap</h3>
-      <ul>
-        <li><strong>Phase 0</strong> — this documentation (done)</li>
-        <li><strong>Phase 1</strong> — ARIA, labels, alt, live regions, keyboard (done)</li>
-        <li><strong>Phase 2</strong> — Share/Copy JSON, comfort options</li>
-        <li><strong>Phase 3</strong> — i18n plumbing (reviewed languages only)</li>
-        <li><strong>Phase 4</strong> — optional command palette / local tools</li>
-      </ul>
-      <p>Full Markdown: <a href="https://github.com/ldjessee-code/avatarlegends_charsheet/blob/main/docs/accessibility.md">accessibility.md</a></p>
     </article>
 
     <article id="character-json">
@@ -251,7 +242,18 @@
     <p class="footer-note">
       Unofficial fan tool. See <a href="../NOTICE.md">NOTICE.md</a>.
       Game by <a href="https://magpiegames.com/">Magpie Games</a>; marks © Viacom / Paramount family.
+      <span id="footer-version"></span>
     </p>
   </div>
+  <script src="../data/version.js"></script>
+  <script>
+    (function () {
+      var v = (window.AL && AL.VERSION) || "";
+      var el = document.getElementById("app-version");
+      if (el) el.textContent = v ? "v" + v : "";
+      var f = document.getElementById("footer-version");
+      if (f && v) f.textContent = " · v" + v;
+    })();
+  </script>
 </body>
 </html>

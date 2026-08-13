@@ -8,7 +8,8 @@ Human- and tool-oriented docs for the Avatar Legends digital character sheets.
 | [Home screen icon](home-screen.md) · [HTML](home-screen.html) | iPhone, iPad, Android “Add to Home Screen” |
 | [Accessibility](accessibility.md) | Goals, what works, known limits, how to report issues |
 | [Character JSON](character-json.md) | Export format, versioning, images block, compatibility |
-| [AI & automation](ai-automation.md) | Prefer JSON + documented actions; no vision-scraping required |
+| [AI & automation](ai-automation.md) | Prefer JSON + documented actions |
+| [Revision history](revision-history.md) · [HTML](revision-history.html) | Past releases only (no roadmap) |
 
 **On the live site:** open [docs/index.html](index.html) (or `/docs/` on GitHub Pages).
 

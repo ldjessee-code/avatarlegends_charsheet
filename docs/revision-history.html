@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Revision history — Avatar Legends Character Sheets</title>
+  <link rel="stylesheet" href="../css/sheet.css" />
+  <style>
+    .docs { max-width: 42rem; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+    .docs h1 { font-family: var(--font-display); font-size: 1.75rem; margin: 0 0 0.35rem; }
+    .docs h2 { font-family: var(--font-display); font-size: 1.15rem; color: var(--accent); margin: 1.5rem 0 0.4rem; }
+    .docs p, .docs li { font-size: 0.95rem; line-height: 1.5; }
+    .docs ul { padding-left: 1.25rem; }
+    .back { color: var(--accent-2); font-weight: 600; }
+    .ver { font-size: 0.9rem; color: var(--muted); margin-bottom: 1rem; }
+  </style>
+</head>
+<body>
+  <div class="docs">
+    <p>
+      <a class="back" href="index.html">← Documentation</a>
+      ·
+      <a class="back" href="../index.html">All playbooks</a>
+    </p>
+    <h1>Revision history</h1>
+    <p class="ver">Current version: <strong id="app-version">…</strong></p>
+    <p>
+      Past releases only — what already shipped. Not a plan for future work.
+    </p>
+
+    <h2>2.2</h2>
+    <ul>
+      <li>Hub: Advanced options styled in gray (utilitarian vs playbook cards)</li>
+      <li>Documentation: version in footer/docs, revision history page</li>
+      <li>Removed phase roadmap language from public docs</li>
+    </ul>
+
+    <h2>2.1</h2>
+    <ul>
+      <li>Advanced options on the hub (offline install, home screen, docs)</li>
+    </ul>
+
+    <h2>2.0</h2>
+    <ul>
+      <li>Accessibility overhaul on the shared sheet engine (landmarks, ARIA, alt text, live status, focus restore, reduced motion)</li>
+    </ul>
+
+    <h2>1.x</h2>
+    <p>Feature growth after first public Pages release, including:</p>
+    <ul>
+      <li>Full Core, Wan Shi Tong’s, and Uncle Iroh’s playbooks</li>
+      <li>Themes, sessions, campaign banner options, JSON export/import (images at end of file)</li>
+      <li>Local session dates, offline pack + home-screen guides</li>
+      <li>Post-session Download JSON + email GM habit</li>
+      <li>Initial documentation set (accessibility, JSON, AI notes)</li>
+    </ul>
+
+    <h2>1.0</h2>
+    <ul>
+      <li>Published for online use on GitHub Pages</li>
+    </ul>
+
+    <h2>0.5</h2>
+    <ul>
+      <li>First local digital character sheets (before GitHub Pages)</li>
+    </ul>
+
+    <p class="footer-note" style="margin-top:2rem">
+      Full Markdown:
+      <a href="https://github.com/ldjessee-code/avatarlegends_charsheet/blob/main/docs/revision-history.md">revision-history.md</a>
+      · Git log:
+      <a href="https://github.com/ldjessee-code/avatarlegends_charsheet/commits/main">commits</a>
+      <span class="app-version-slot"></span>
+    </p>
+  </div>
+  <script src="../data/version.js"></script>
+  <script>
+    (function () {
+      var v = (window.AL && AL.VERSION) || "";
+      var el = document.getElementById("app-version");
+      if (el) el.textContent = v ? "v" + v : "";
+    })();
+  </script>
+</body>
+</html>

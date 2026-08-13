@@ -13,9 +13,10 @@ Open-source style: longer docs live in **[docs/](docs/)**.
 | Doc | Contents |
 |-----|----------|
 | [docs/index.html](docs/index.html) | Browse on the live site / offline |
-| [Accessibility](docs/accessibility.md) | Goals, status, how to report issues |
+| [Accessibility](docs/accessibility.md) | What’s done for a11y; how to report issues |
 | [Character JSON](docs/character-json.md) | Export format, versions, images block |
 | [AI & automation](docs/ai-automation.md) | Prefer JSON + documented actions |
+| [Revision history](docs/revision-history.md) | Past releases only (no roadmap) |
 
 GitHub renders the `.md` files in the repo; GitHub Pages serves `docs/index.html`.
 
