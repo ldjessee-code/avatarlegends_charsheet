@@ -1555,12 +1555,64 @@ textarea {
   }
 }
 
+/* Skip link (keyboard / screen reader) */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: 0.5rem 0.75rem;
+  background: var(--toolbar-bg, #2a1f18);
+  color: #fff;
+  border: 2px solid var(--gold, #c9a227);
+  border-radius: 0 0 6px 0;
+  font-weight: 600;
+  text-decoration: none;
+}
+.skip-link:focus {
+  left: 0;
+}
+
+/* Visually hidden but available to AT when needed */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Portrait placeholder is a button for keyboard/AT */
+button.portrait-placeholder {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* Prefer reduced motion: no toolbar shrink animation */
+@media (prefers-reduced-motion: reduce) {
+  .toolbar,
+  .toolbar h1,
+  .toolbar button,
+  .toolbar .btn,
+  .portrait,
+  .portrait-placeholder {
+    transition: none !important;
+  }
+}
+
 /* Print */
 @media print {
   body { background: white; }
   .toolbar { display: none !important; }
+  .skip-link { display: none !important; }
   .sheet { max-width: none; padding: 0; }
   .section { box-shadow: none; break-inside: avoid; }
   .section.is-collapsed .section-body { display: block !important; }
+  .section-body[hidden] { display: block !important; }
   .sheet-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }

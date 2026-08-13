@@ -323,7 +323,10 @@
 
   function setStatus(msg) {
     const el = $("#save-status");
-    if (el) el.textContent = msg;
+    if (el) {
+      el.textContent = msg;
+      // aria-live region (in HTML) announces polite updates for screen readers
+    }
   }
 
   function updateToolbarName(state) {
@@ -334,11 +337,38 @@
       : currentPb.name;
   }
 
+  /** Capture focus across full re-renders (Phase 1 a11y). */
+  function captureFocusKey() {
+    const el = document.activeElement;
+    if (!el || el === document.body) return null;
+    return el.getAttribute("data-focus-key") || el.id || null;
+  }
+
+  function restoreFocusKey(key) {
+    if (!key) return;
+    let el = document.querySelector(`[data-focus-key="${cssEscape(key)}"]`);
+    if (!el && key) el = document.getElementById(key);
+    if (el && typeof el.focus === "function") {
+      try {
+        el.focus({ preventScroll: true });
+      } catch {
+        el.focus();
+      }
+    }
+  }
+
+  function cssEscape(s) {
+    if (window.CSS && CSS.escape) return CSS.escape(s);
+    return String(s).replace(/"/g, '\\"');
+  }
+
   function refresh() {
     if (!rootEl || !currentPb) return;
+    const focusKey = captureFocusKey();
     applyTheme(currentState);
     render(rootEl, currentPb, currentState, catalog);
     updateToolbarName(currentState);
+    restoreFocusKey(focusKey);
   }
 
   // ---------- DOM helpers ----------
@@ -453,27 +483,39 @@
   }
 
   function makeSection(id, title, expanded, summaryNode, bodyBuilder, options) {
+    const headingId = "section-title-" + id;
+    const bodyId = "section-body-" + id;
+    const toggleKey = "section-toggle-" + id;
+
     const sec = document.createElement("section");
     sec.className = "section" + (expanded ? "" : " is-collapsed");
     sec.dataset.section = id;
+    sec.setAttribute("aria-labelledby", headingId);
 
     const head = document.createElement("div");
     head.className = "section-head";
-    head.setAttribute("role", "button");
-    head.setAttribute("aria-expanded", expanded ? "true" : "false");
-    head.tabIndex = 0;
 
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "section-toggle-btn";
-    btn.setAttribute("aria-label", expanded ? "Collapse section" : "Expand section");
+    btn.id = toggleKey;
+    btn.setAttribute("data-focus-key", toggleKey);
+    btn.setAttribute("aria-expanded", expanded ? "true" : "false");
+    btn.setAttribute("aria-controls", bodyId);
+    btn.setAttribute(
+      "aria-label",
+      (expanded ? "Collapse " : "Expand ") + title
+    );
     btn.textContent = expanded ? "▾" : "▸";
 
     const h2 = document.createElement("h2");
+    h2.id = headingId;
     h2.textContent = title;
 
     const summary = document.createElement("div");
     summary.className = "section-summary";
+    // Summary is useful when collapsed; hide from AT when expanded (body has full content)
+    if (expanded) summary.setAttribute("aria-hidden", "true");
     if (summaryNode) {
       if (typeof summaryNode === "string") summary.textContent = summaryNode;
       else summary.appendChild(summaryNode);
@@ -489,14 +531,13 @@
 
     const body = document.createElement("div");
     body.className = "section-body";
+    body.id = bodyId;
+    body.hidden = !expanded;
     bodyBuilder(body);
 
-    function toggle() {
-      if (options && options.onToggle) options.onToggle(!sec.classList.contains("is-collapsed") === false ? true : !expanded);
-      // Use actual state flag via callback
+    function doToggle() {
       if (options && options.setExpanded) {
-        const next = sec.classList.contains("is-collapsed");
-        options.setExpanded(next);
+        options.setExpanded(sec.classList.contains("is-collapsed"));
         scheduleSave();
         refresh();
       }
@@ -504,27 +545,19 @@
 
     head.addEventListener("click", (e) => {
       if (e.target.closest("button.track-box, input, select, textarea, a, .growth-inline-track")) return;
-      if (e.target === btn || e.target === head || e.target === h2 || e.target.closest(".section-summary") || e.target === summary) {
-        if (options && options.setExpanded) {
-          options.setExpanded(sec.classList.contains("is-collapsed"));
-          scheduleSave();
-          refresh();
-        }
+      if (
+        e.target === btn ||
+        e.target === head ||
+        e.target === h2 ||
+        e.target.closest(".section-summary") ||
+        e.target === summary
+      ) {
+        doToggle();
       }
     });
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
-      if (options && options.setExpanded) {
-        options.setExpanded(sec.classList.contains("is-collapsed"));
-        scheduleSave();
-        refresh();
-      }
-    });
-    head.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        btn.click();
-      }
+      doToggle();
     });
 
     sec.appendChild(head);
@@ -563,7 +596,9 @@
       "Character name",
       { className: "char-name-input" }
     );
+    nameIn.id = "character-name";
     nameIn.setAttribute("aria-label", "Character name");
+    nameIn.setAttribute("data-focus-key", "character-name");
     left.appendChild(nameIn);
 
     const playerRow = document.createElement("div");
@@ -580,6 +615,7 @@
       "Your name at the table"
     );
     pin.id = "player-name";
+    pin.setAttribute("data-focus-key", "player-name");
     playerRow.appendChild(plab);
     playerRow.appendChild(pin);
     left.appendChild(playerRow);
@@ -587,8 +623,9 @@
     // Middle-right: playbook info
     const right = document.createElement("div");
     right.className = "identity-right";
+    right.setAttribute("aria-label", "Playbook");
     right.innerHTML = `
-      <p class="playbook-name">${escapeHtml(pb.name)}</p>
+      <p class="playbook-name" id="playbook-heading">${escapeHtml(pb.name)}</p>
       <p class="tagline">${escapeHtml(pb.tagline || "")}</p>
       <span class="source-badge">${escapeHtml(pb.source || "")}</span>
     `;
@@ -596,24 +633,40 @@
     // Far right: portrait + buttons
     const portraitWrap = document.createElement("div");
     portraitWrap.className = "portrait-wrap";
+    portraitWrap.setAttribute("role", "group");
+    portraitWrap.setAttribute("aria-label", "Character portrait");
     const expanded = !!(state.ui && state.ui.portraitExpanded);
 
     if (state.portraitDataUrl) {
       const img = document.createElement("img");
       img.className = "portrait" + (expanded ? " is-expanded" : "");
       img.src = state.portraitDataUrl;
-      img.alt = state.name ? `${state.name} portrait` : "Character portrait";
+      img.alt = state.name
+        ? "Portrait of " + state.name + (expanded ? " (enlarged)" : "")
+        : "Character portrait" + (expanded ? " (enlarged)" : "");
       img.title = expanded ? "Click to shrink" : "Click to enlarge";
-      img.addEventListener("click", () => {
+      img.setAttribute("data-focus-key", "portrait-image");
+      img.tabIndex = 0;
+      const toggleSize = () => {
         state.ui.portraitExpanded = !state.ui.portraitExpanded;
         scheduleSave();
         refresh();
+      };
+      img.addEventListener("click", toggleSize);
+      img.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          toggleSize();
+        }
       });
       portraitWrap.appendChild(img);
     } else {
-      const ph = document.createElement("div");
+      const ph = document.createElement("button");
+      ph.type = "button";
       ph.className = "portrait-placeholder" + (expanded ? " is-expanded" : "");
       ph.textContent = "No image";
+      ph.setAttribute("aria-label", "No character portrait. Click to add an image.");
+      ph.setAttribute("data-focus-key", "portrait-placeholder");
       ph.addEventListener("click", () => $("#portrait-file") && $("#portrait-file").click());
       portraitWrap.appendChild(ph);
     }
@@ -625,6 +678,7 @@
     file.id = "portrait-file";
     file.accept = "image/*";
     file.hidden = true;
+    file.setAttribute("aria-label", "Upload character portrait image");
     file.addEventListener("change", () => {
       readImageFile(file.files && file.files[0], (dataUrl) => {
         state.portraitDataUrl = dataUrl;
@@ -637,11 +691,18 @@
     const uploadBtn = document.createElement("button");
     uploadBtn.type = "button";
     uploadBtn.textContent = state.portraitDataUrl ? "Change" : "Add image";
+    uploadBtn.setAttribute(
+      "aria-label",
+      state.portraitDataUrl ? "Change character portrait" : "Add character portrait"
+    );
+    uploadBtn.setAttribute("data-focus-key", "portrait-upload");
     uploadBtn.addEventListener("click", () => file.click());
 
     const sizeBtn = document.createElement("button");
     sizeBtn.type = "button";
     sizeBtn.textContent = expanded ? "Shrink" : "Enlarge";
+    sizeBtn.setAttribute("aria-label", expanded ? "Shrink portrait" : "Enlarge portrait");
+    sizeBtn.setAttribute("data-focus-key", "portrait-size");
     sizeBtn.disabled = !state.portraitDataUrl;
     sizeBtn.addEventListener("click", () => {
       state.ui.portraitExpanded = !state.ui.portraitExpanded;
@@ -652,6 +713,8 @@
     const clearBtn = document.createElement("button");
     clearBtn.type = "button";
     clearBtn.textContent = "Remove";
+    clearBtn.setAttribute("aria-label", "Remove character portrait");
+    clearBtn.setAttribute("data-focus-key", "portrait-remove");
     clearBtn.disabled = !state.portraitDataUrl;
     clearBtn.addEventListener("click", () => {
       if (!confirm("Remove character image?")) return;
@@ -927,11 +990,25 @@
       fatRow.appendChild(fatLabel);
       const fatTrack = document.createElement("div");
       fatTrack.className = "track collapsed-fatigue-track";
+      fatTrack.setAttribute(
+        "aria-label",
+        "Fatigue " + state.fatigue + " of " + AL.COMMON.fatigueMax
+      );
       for (let i = 1; i <= AL.COMMON.fatigueMax; i++) {
         const box = document.createElement("button");
         box.type = "button";
         box.className = "track-box growth-inline" + (i <= state.fatigue ? " filled" : "");
         box.title = `Fatigue ${i <= state.fatigue ? i : i - 1} — click to set`;
+        box.setAttribute("data-focus-key", "fatigue-collapsed-" + i);
+        box.setAttribute(
+          "aria-label",
+          "Fatigue mark " +
+            i +
+            (i <= state.fatigue ? ", filled" : ", empty") +
+            ". Set fatigue to " +
+            (i === state.fatigue ? i - 1 : i)
+        );
+        box.setAttribute("aria-pressed", i <= state.fatigue ? "true" : "false");
         box.addEventListener("click", (e) => {
           e.stopPropagation();
           state.fatigue = state.fatigue === i ? i - 1 : i;
@@ -994,12 +1071,14 @@
           const box = document.createElement("div");
           box.className = "stat-box";
           const val = effectiveStat(state, stat);
+          box.setAttribute("role", "group");
+          box.setAttribute("aria-label", stat + " " + formatStat(val));
           box.innerHTML = `
-            <div class="stat-name">${stat}</div>
-            <div class="stat-value">${formatStat(val)}</div>
+            <div class="stat-name" id="stat-label-${stat}">${stat}</div>
+            <div class="stat-value" aria-live="polite">${formatStat(val)}</div>
             <div class="stat-controls">
-              <button type="button" data-act="dec" data-stat="${stat}">−</button>
-              <button type="button" data-act="inc" data-stat="${stat}">+</button>
+              <button type="button" data-act="dec" data-stat="${stat}" data-focus-key="stat-dec-${stat}" aria-label="Decrease ${stat}">−</button>
+              <button type="button" data-act="inc" data-stat="${stat}" data-focus-key="stat-inc-${stat}" aria-label="Increase ${stat}">+</button>
             </div>
           `;
           sg.appendChild(box);
@@ -1007,19 +1086,22 @@
         statsCard.appendChild(sg);
         const bonus = document.createElement("div");
         bonus.className = "creation-bonus";
-        bonus.appendChild(document.createTextNode("Creation +1: "));
-        bonus.appendChild(
-          selectInput(
-            state.creationBonusStat,
-            AL.COMMON.stats,
-            (v) => {
-              state.creationBonusStat = v;
-              scheduleSave();
-              refresh();
-            },
-            "— none —"
-          )
+        const bonusLabel = document.createElement("label");
+        bonusLabel.textContent = "Creation +1: ";
+        const bonusSel = selectInput(
+          state.creationBonusStat,
+          AL.COMMON.stats,
+          (v) => {
+            state.creationBonusStat = v;
+            scheduleSave();
+            refresh();
+          },
+          "— none —"
         );
+        bonusSel.setAttribute("aria-label", "Creation bonus: add +1 to one stat");
+        bonusSel.setAttribute("data-focus-key", "creation-bonus");
+        bonusLabel.appendChild(bonusSel);
+        bonus.appendChild(bonusLabel);
         statsCard.appendChild(bonus);
         statsCard.addEventListener("click", (e) => {
           const btn = e.target.closest("button[data-act]");
@@ -1035,9 +1117,23 @@
         // Balance
         const balCard = document.createElement("div");
         balCard.className = "subcard";
-        balCard.innerHTML = "<h3>Balance</h3>";
+        balCard.innerHTML = "<h3 id=\"balance-heading\">Balance</h3>";
         const track = document.createElement("div");
         track.className = "balance-track";
+        track.setAttribute("role", "group");
+        track.setAttribute(
+          "aria-label",
+          "Balance track from " +
+            pb.principles.left +
+            " to " +
+            pb.principles.right +
+            ". Current balance " +
+            (state.balance > 0 ? "+" : "") +
+            state.balance +
+            ". Center at " +
+            (state.center > 0 ? "+" : "") +
+            state.center
+        );
         track.innerHTML = `
           <div class="balance-labels">
             <span class="left">${escapeHtml(pb.principles.left)}</span>
@@ -1046,10 +1142,25 @@
         `;
         const pips = document.createElement("div");
         pips.className = "balance-pips";
+        pips.setAttribute("role", "radiogroup");
+        pips.setAttribute("aria-label", "Current balance position");
         for (let v = AL.COMMON.balanceMin; v <= AL.COMMON.balanceMax; v++) {
           const pip = document.createElement("button");
           pip.type = "button";
           pip.className = "balance-pip";
+          pip.setAttribute("role", "radio");
+          pip.setAttribute("aria-checked", v === state.balance ? "true" : "false");
+          pip.setAttribute("data-focus-key", "balance-" + v);
+          const label =
+            (v === 0 ? "0" : v > 0 ? "+" + v : String(v)) +
+            (v < 0
+              ? " toward " + pb.principles.left
+              : v > 0
+                ? " toward " + pb.principles.right
+                : " center of track") +
+            (v === state.center ? ", center mark" : "") +
+            (v === state.balance ? ", selected" : "");
+          pip.setAttribute("aria-label", label);
           if (v === state.balance) pip.classList.add("current");
           if (v === state.center) pip.classList.add("center-mark");
           pip.textContent = v === 0 ? "0" : v > 0 ? `+${v}` : String(v);
@@ -1064,22 +1175,25 @@
         balCard.appendChild(track);
         const centerRow = document.createElement("div");
         centerRow.className = "center-controls";
-        centerRow.appendChild(document.createTextNode("Center: "));
-        centerRow.appendChild(
-          selectInput(
-            String(state.center),
-            Array.from({ length: 7 }, (_, i) => {
-              const v = i - 3;
-              return { value: String(v), label: v === 0 ? "0" : v > 0 ? `+${v}` : String(v) };
-            }),
-            (v) => {
-              state.center = Number(v);
-              scheduleSave();
-              refresh();
-            },
-            false
-          )
+        const centerLab = document.createElement("label");
+        centerLab.textContent = "Center: ";
+        const centerSel = selectInput(
+          String(state.center),
+          Array.from({ length: 7 }, (_, i) => {
+            const v = i - 3;
+            return { value: String(v), label: v === 0 ? "0" : v > 0 ? `+${v}` : String(v) };
+          }),
+          (v) => {
+            state.center = Number(v);
+            scheduleSave();
+            refresh();
+          },
+          false
         );
+        centerSel.setAttribute("aria-label", "Balance center position");
+        centerSel.setAttribute("data-focus-key", "balance-center");
+        centerLab.appendChild(centerSel);
+        centerRow.appendChild(centerLab);
         balCard.appendChild(centerRow);
 
         grid.appendChild(statsCard);
@@ -1123,10 +1237,23 @@
         fat.innerHTML = "<h3>Fatigue</h3>";
         const ftrack = document.createElement("div");
         ftrack.className = "track";
+        ftrack.setAttribute("role", "group");
+        ftrack.setAttribute(
+          "aria-label",
+          "Fatigue " + state.fatigue + " of " + AL.COMMON.fatigueMax
+        );
         for (let i = 1; i <= AL.COMMON.fatigueMax; i++) {
           const box = document.createElement("button");
           box.type = "button";
           box.className = "track-box" + (i <= state.fatigue ? " filled" : "");
+          box.setAttribute("data-focus-key", "fatigue-" + i);
+          box.setAttribute(
+            "aria-label",
+            i <= state.fatigue
+              ? "Fatigue mark " + i + " filled. Click to set fatigue to " + (i === state.fatigue ? i - 1 : i)
+              : "Fatigue mark " + i + " empty. Click to set fatigue to " + i
+          );
+          box.setAttribute("aria-pressed", i <= state.fatigue ? "true" : "false");
           box.textContent = i <= state.fatigue ? "●" : "";
           box.addEventListener("click", () => {
             state.fatigue = state.fatigue === i ? i - 1 : i;
@@ -1696,10 +1823,25 @@
     const headExtra = document.createElement("div");
     headExtra.className = "growth-inline-track";
     headExtra.title = "Growth track — click boxes even when collapsed";
+    headExtra.setAttribute("role", "group");
+    headExtra.setAttribute(
+      "aria-label",
+      "Growth " + state.growth + " of " + AL.COMMON.growthMax + ". Clickable when section is collapsed."
+    );
     for (let i = 1; i <= AL.COMMON.growthMax; i++) {
       const box = document.createElement("button");
       box.type = "button";
       box.className = "track-box growth growth-inline" + (i <= state.growth ? " filled" : "");
+      box.setAttribute("data-focus-key", "growth-inline-" + i);
+      box.setAttribute(
+        "aria-label",
+        "Growth mark " +
+          i +
+          (i <= state.growth ? ", filled" : ", empty") +
+          ". Set growth to " +
+          (i === state.growth ? i - 1 : i)
+      );
+      box.setAttribute("aria-pressed", i <= state.growth ? "true" : "false");
       box.addEventListener("click", (e) => {
         e.stopPropagation();
         state.growth = state.growth === i ? i - 1 : i;
@@ -1732,10 +1874,25 @@
         body.appendChild(trackLabel);
         const track = document.createElement("div");
         track.className = "track";
+        track.setAttribute("role", "group");
+        track.setAttribute(
+          "aria-label",
+          "Growth track " + state.growth + " of " + AL.COMMON.growthMax
+        );
         for (let i = 1; i <= AL.COMMON.growthMax; i++) {
           const box = document.createElement("button");
           box.type = "button";
           box.className = "track-box growth" + (i <= state.growth ? " filled" : "");
+          box.setAttribute("data-focus-key", "growth-" + i);
+          box.setAttribute(
+            "aria-label",
+            "Growth mark " +
+              i +
+              (i <= state.growth ? ", filled" : ", empty") +
+              ". Set growth to " +
+              (i === state.growth ? i - 1 : i)
+          );
+          box.setAttribute("aria-pressed", i <= state.growth ? "true" : "false");
           box.addEventListener("click", () => {
             state.growth = state.growth === i ? i - 1 : i;
             scheduleSave();
@@ -1875,7 +2032,10 @@
       banner.className = "campaign-banner";
       const img = document.createElement("img");
       img.src = resolved.imageSrc;
-      img.alt = resolved.name || "Campaign banner";
+      img.alt =
+        (resolved.name || "Campaign") +
+        " banner" +
+        (resolved.tagline ? ". " + resolved.tagline : "");
       img.loading = "lazy";
       banner.appendChild(img);
       if (resolved.tagline) {
@@ -1900,6 +2060,8 @@
     // Mode radios
     const modeRow = document.createElement("div");
     modeRow.className = "campaign-mode-row";
+    modeRow.setAttribute("role", "radiogroup");
+    modeRow.setAttribute("aria-label", "Campaign banner display");
     const modes = [
       { id: "default", label: "Package default" },
       { id: "custom", label: "My image" },
@@ -1912,6 +2074,7 @@
       radio.type = "radio";
       radio.name = "campaign-banner-mode";
       radio.value = m.id;
+      radio.setAttribute("data-focus-key", "campaign-mode-" + m.id);
       radio.checked = resolved.mode === m.id;
       radio.addEventListener("change", () => {
         if (!radio.checked) return;
@@ -2022,11 +2185,22 @@
     const head = document.createElement("div");
     head.className = "session-note-head";
 
+    const sessionBodyId = "session-body-" + (session.id || idx);
+    const sessionLabel =
+      [session.playDate, session.title].filter(Boolean).join(" — ") || "Session " + (idx + 1);
+
     const toggle = document.createElement("button");
     toggle.type = "button";
     toggle.className = "session-toggle";
     toggle.textContent = session.collapsed ? "▸" : "▾";
     toggle.title = session.collapsed ? "Expand notes" : "Collapse notes";
+    toggle.setAttribute("aria-expanded", session.collapsed ? "false" : "true");
+    toggle.setAttribute("aria-controls", sessionBodyId);
+    toggle.setAttribute(
+      "aria-label",
+      (session.collapsed ? "Expand" : "Collapse") + " session notes for " + sessionLabel
+    );
+    toggle.setAttribute("data-focus-key", "session-toggle-" + (session.id || idx));
     toggle.addEventListener("click", (e) => {
       e.stopPropagation();
       state.sessions[idx].collapsed = !state.sessions[idx].collapsed;
@@ -2039,7 +2213,7 @@
       const thumb = document.createElement("img");
       thumb.className = "session-head-thumb";
       thumb.src = session.imageDataUrl;
-      thumb.alt = "";
+      thumb.alt = "Session art thumbnail: " + sessionLabel;
       thumb.title = "Session image";
       head.appendChild(thumb);
     }
@@ -2067,9 +2241,11 @@
     remove.type = "button";
     remove.className = "remove-btn";
     remove.textContent = "Remove";
+    remove.setAttribute("aria-label", "Remove session note " + sessionLabel);
+    remove.setAttribute("data-focus-key", "session-remove-" + (session.id || idx));
     remove.addEventListener("click", (e) => {
       e.stopPropagation();
-      const label = [session.playDate, session.title].filter(Boolean).join(" — ") || "this session";
+      const label = sessionLabel;
       if (
         !confirm(
           `Remove session note “${label}”? This cannot be undone (unless you have a JSON backup).`
@@ -2091,6 +2267,8 @@
     // --- Expanded body -----------------------------------------------------
     const body = document.createElement("div");
     body.className = "session-note-body";
+    body.id = sessionBodyId;
+    body.hidden = !!session.collapsed;
 
     const main = document.createElement("div");
     main.className = "session-body-main";
@@ -2102,7 +2280,7 @@
       const img = document.createElement("img");
       img.className = "session-image";
       img.src = session.imageDataUrl;
-      img.alt = "Session art";
+      img.alt = "Session art for " + sessionLabel;
       media.appendChild(img);
       const mediaActions = document.createElement("div");
       mediaActions.className = "session-media-actions";

@@ -20,15 +20,18 @@ We aim to make the sheets usable for as many people as possible, including:
 |------|--------|
 | Works offline / on GitHub Pages | Supported |
 | Mobile Safari / Chrome | Supported (use Pages URL, not multi-file zip when possible) |
-| Keyboard use of buttons and fields | Partially supported; not fully audited |
-| Screen reader labeling of tracks, pips, collapse controls | **Planned (Phase 1)** — not yet fully implemented |
-| `alt` text on portraits / banners / session art | **Planned (Phase 1)** — partial / inconsistent |
-| Live announcements (e.g. “saved”) | **Planned (Phase 1)** |
+| Keyboard use of buttons and fields | Improved (Phase 1); not a full third-party audit |
+| Screen reader labeling of tracks, pips, collapse controls | **Phase 1 shipped** — section toggles, fatigue/growth/balance, conditions |
+| `alt` text on portraits / banners / session art | **Phase 1 shipped** |
+| Live announcements (e.g. “saved”) | **Phase 1 shipped** (`aria-live` on status) |
+| Landmarks / skip link | **Phase 1 shipped** (banner, main, footer, skip to sheet) |
+| Focus after re-render | **Phase 1 shipped** (`data-focus-key` restore) |
+| `prefers-reduced-motion` | **Phase 1 shipped** |
 | Full WCAG 2.2 AA certification | **Not claimed** |
 | Multi-language UI | Infrastructure planned later; English only for now |
 | Native iOS App Intents / system AI | **Out of scope** for the web app; possible future native app if demand exists |
 
-This document will be updated as Phase 1+ work lands.
+This document will be updated as later phases land.
 
 ## Recommended ways to play with assistive tech
 
@@ -50,8 +53,8 @@ with:
 
 ## Roadmap (high level)
 
-- **Phase 0 (this folder):** Policy and machine-readable contracts  
-- **Phase 1:** Screen reader / keyboard / alt / live regions (shared engine)  
+- **Phase 0 (this folder):** Policy and machine-readable contracts — **done**  
+- **Phase 1:** Screen reader / keyboard / alt / live regions (shared engine) — **done** (needs user testing with VoiceOver / NVDA)  
 - **Phase 2:** Motor/cognitive helpers (e.g. Share/Copy JSON, optional comfort options)  
 - **Phase 3:** i18n plumbing (English only until native speakers review)  
 - **Phase 4 (optional):** Command palette / documented tools for assistants  
