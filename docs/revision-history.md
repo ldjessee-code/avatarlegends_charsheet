@@ -2,9 +2,15 @@
 
 Past releases only. This is not a roadmap and does not promise future work.
 
-Current version: **2.3** (see `data/version.js`).
+Current version: **2.4** (see `data/version.js`).
 
 ---
+
+## 2.4
+
+- Character generator on the hub: lock era / culture / training / playbook (or surprise the rest)
+- Player characters open on that playbook’s sheet; NPCs stay on the generator
+- Leftover generated characters: review, download JSON, or discard when you next open Generate
 
 ## 2.3
 

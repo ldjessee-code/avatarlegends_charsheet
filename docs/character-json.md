@@ -92,6 +92,7 @@ Not every field is required. Typical groups:
 - **Growth:** `growth`, `advancements`, `momentUnlocked`
 - **Sessions:** `sessions[]` (`id`, `playDate`, `title`, `notes`, `collapsed`, `imageDataUrl` empty in format-3 body)
 - **UI:** `ui` (which sections are expanded)
+- **Generated (optional):** `role` (`pc` or `npc`), `fatigueMax` (NPCs), plus leftover generator metadata in `_meta` when exported from Generate
 
 Playbook-specific feature fields live under `featureFields` (and optional nested objects such as drives).
 

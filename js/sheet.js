@@ -2468,11 +2468,10 @@
     return c;
   }
 
-  function exportJson() {
+  function buildExportPayload(pb, state) {
     const pagesBase = "https://ldjessee-code.github.io/avatarlegends_charsheet";
-    const { character, images } = splitCharacterImages(currentState);
+    const { character, images } = splitCharacterImages(state);
 
-    // Property order matters for human reading: meta → character → images last
     const payload = {
       _meta: {
         app: "avatar-legends-charsheet",
@@ -2484,12 +2483,12 @@
          * Older files used "version" for this; Load still accepts that.
          */
         exportFormat: 3,
-        playbookId: currentPb.id,
-        playbookName: currentPb.name,
+        playbookId: pb.id,
+        playbookName: pb.name,
         exportedAt: new Date().toISOString(),
         repoUrl: "https://github.com/ldjessee-code/avatarlegends_charsheet",
         pagesUrl: pagesBase + "/",
-        playbookUrl: pagesBase + "/playbooks/" + currentPb.id + ".html",
+        playbookUrl: pagesBase + "/playbooks/" + pb.id + ".html",
         note: "Binary images (if any) are under top-level \"images\". appVersion is the UI; exportFormat is this file layout."
       },
       character: character
@@ -2497,15 +2496,184 @@
     if (Object.keys(images).length) {
       payload.images = images;
     }
+    return payload;
+  }
 
+  function downloadCharacterJson(pb, state) {
+    const payload = buildExportPayload(pb, state);
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    const base = (currentState.name || currentPb.id).replace(/[^\w\-]+/g, "_") || "character";
+    const base = (state.name || pb.id).replace(/[^\w\-]+/g, "_") || "character";
     a.download = `${base}_sheet.json`;
     a.click();
     URL.revokeObjectURL(a.href);
+  }
+
+  function exportJson() {
+    downloadCharacterJson(currentPb, currentState);
     setStatus("Downloaded JSON");
+  }
+
+  /** True when the saved sheet has more than a blank default. */
+  function sheetLooksUsed(state) {
+    if (!state) return false;
+    const text = [
+      state.name,
+      state.playerName,
+      state.look,
+      state.hometown,
+      state.training,
+      state.fightingStyle,
+      state.background,
+      state.demeanor,
+      state.backstory,
+      state.creationBonusStat,
+      state.portraitDataUrl
+    ];
+    if (text.some((v) => String(v || "").trim())) return true;
+    if ((state.selectedMoves || []).some((id) => String(id || "").trim())) return true;
+    if ((state.historyAnswers || []).some((a) => String(a || "").trim())) return true;
+    if (state.connections && Object.values(state.connections).some((v) => String(v || "").trim())) {
+      return true;
+    }
+    if (state.featureFields) {
+      const used = Object.keys(state.featureFields).some((k) => {
+        if (k === "drives") {
+          const d = state.featureFields.drives;
+          return d && typeof d === "object" && Object.values(d).some(Boolean);
+        }
+        return String(state.featureFields[k] || "").trim();
+      });
+      if (used) return true;
+    }
+    if (state.fatigue > 0 || state.growth > 0) return true;
+    if ((state.sessions || []).some((s) => s && ((s.notes || "").trim() || (s.title || "").trim() || s.imageDataUrl))) {
+      return true;
+    }
+    return false;
+  }
+
+  function markGeneratedOpened(leftoverId) {
+    if (!leftoverId) return;
+    try {
+      const raw = localStorage.getItem("avatar-legends-generated");
+      if (!raw) return;
+      const store = JSON.parse(raw);
+      if (!store || !Array.isArray(store.items)) return;
+      store.items.forEach((i) => {
+        if (i && i.id === leftoverId) i.openedOnSheet = true;
+      });
+      localStorage.setItem("avatar-legends-generated", JSON.stringify(store));
+    } catch {
+      /* ignore */
+    }
+  }
+
+  function clearGeneratedQuery() {
+    try {
+      if (window.history && history.replaceState) {
+        history.replaceState({}, "", location.pathname + location.hash);
+      }
+    } catch {
+      /* ignore */
+    }
+  }
+
+  function applyGeneratedCharacter(staging) {
+    currentState = migrateState(currentPb, staging.character);
+    saveState(currentPb, currentState);
+    localStorage.removeItem("avatar-legends-generated-staging");
+    markGeneratedOpened(staging.leftoverId);
+    clearGeneratedQuery();
+    refresh();
+    setStatus("Loaded generated character");
+  }
+
+  function showGeneratedReplaceModal(staging) {
+    const existing = document.getElementById("generated-replace-modal");
+    if (existing) existing.remove();
+
+    const wrap = document.createElement("div");
+    wrap.id = "generated-replace-modal";
+    wrap.className = "sheet-modal";
+    wrap.setAttribute("role", "dialog");
+    wrap.setAttribute("aria-modal", "true");
+    wrap.setAttribute("aria-labelledby", "generated-replace-title");
+
+    const box = document.createElement("div");
+    box.className = "sheet-modal-card";
+    const title = document.createElement("h2");
+    title.id = "generated-replace-title";
+    title.textContent = "Replace the saved " + currentPb.name + "?";
+    const p = document.createElement("p");
+    const existingName = (currentState && currentState.name) || "an unsaved character";
+    const incoming = (staging.character && staging.character.name) || "the generated character";
+    p.textContent =
+      "This playbook already has “" +
+      existingName +
+      "” in this browser. Opening “" +
+      incoming +
+      "” will replace it here.";
+    const actions = document.createElement("div");
+    actions.className = "sheet-modal-actions";
+
+    const cancel = document.createElement("button");
+    cancel.type = "button";
+    cancel.className = "secondary";
+    cancel.textContent = "Cancel";
+    cancel.addEventListener("click", () => {
+      localStorage.removeItem("avatar-legends-generated-staging");
+      clearGeneratedQuery();
+      wrap.remove();
+      setStatus("Kept existing character");
+    });
+
+    const saveThen = document.createElement("button");
+    saveThen.type = "button";
+    saveThen.className = "primary-file";
+    saveThen.textContent = "Download current, then replace";
+    saveThen.addEventListener("click", () => {
+      downloadCharacterJson(currentPb, currentState);
+      applyGeneratedCharacter(staging);
+      wrap.remove();
+    });
+
+    const replace = document.createElement("button");
+    replace.type = "button";
+    replace.className = "secondary";
+    replace.textContent = "Replace without saving";
+    replace.addEventListener("click", () => {
+      applyGeneratedCharacter(staging);
+      wrap.remove();
+    });
+
+    actions.appendChild(cancel);
+    actions.appendChild(saveThen);
+    actions.appendChild(replace);
+    box.appendChild(title);
+    box.appendChild(p);
+    box.appendChild(actions);
+    wrap.appendChild(box);
+    document.body.appendChild(wrap);
+    saveThen.focus();
+  }
+
+  function consumeGeneratedStaging() {
+    if (new URLSearchParams(location.search).get("generated") !== "1") return;
+    let staging = null;
+    try {
+      staging = JSON.parse(localStorage.getItem("avatar-legends-generated-staging") || "null");
+    } catch {
+      staging = null;
+    }
+    if (!staging || staging.playbookId !== currentPb.id || !staging.character) return false;
+    if (!sheetLooksUsed(currentState)) {
+      applyGeneratedCharacter(staging);
+      return true;
+    }
+    showGeneratedReplaceModal(staging);
+    return true;
   }
 
   function importJson(file) {
@@ -2593,7 +2761,8 @@
     setupToolbarScroll();
     injectAppVersion();
     refresh();
-    setStatus("Ready");
+    const loadedGenerated = consumeGeneratedStaging();
+    if (!loadedGenerated) setStatus("Ready");
   }
 
   /** Show AL.VERSION in the page footer (sheets + any page that includes version.js). */
@@ -2610,13 +2779,11 @@
     foot.appendChild(span);
   }
 
-  AL.Sheet = { init, loadState, saveState, defaultState };
+  AL.Sheet = { init, loadState, saveState, defaultState, sheetLooksUsed };
 
   document.addEventListener("DOMContentLoaded", () => {
-    const id =
-      document.body.dataset.playbook ||
-      new URLSearchParams(location.search).get("playbook") ||
-      "adamant";
+    const id = document.body.dataset.playbook;
+    if (!id) return;
     init(id);
   });
 })();

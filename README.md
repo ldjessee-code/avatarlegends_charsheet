@@ -52,8 +52,8 @@ Details: [docs/home-screen.md](docs/home-screen.md) · [HTML](docs/home-screen.h
 
 ### Make your character
 
-1. Pick your playbook from the hub (or open its HTML file).
-2. Fill name, player, training, history, moves, techniques, etc.
+1. Pick your playbook from the hub (or open its HTML file), **or** use **Generate a character** to get a starting point (era / culture / training / playbook locks).
+2. Fill or tweak name, player, training, history, moves, techniques, etc.
 3. Changes **autosave in this browser** (local storage).
 4. **After every session:** click **Download JSON** and **email that file to your GM**.  
    That keeps a backup in email and keeps you both aligned on the character.
@@ -141,6 +141,7 @@ Shown on the left when expanded; tiny thumb in the collapsed header if present.
 ```
 charsheet/
   index.html              Hub — pick a playbook
+  generate.html           Constrained character generator
   NOTICE.md               Legal / IP notice
   README.md               This file
   assets/                 Campaign banner (and similar static art)
@@ -163,6 +164,7 @@ charsheet/
 
 - **No build step.** Plain static files.
 - **Load order** on a playbook page: `common.js` → `campaign.js` → `playbooks/<id>.js` → `sheet.js`
+- **Generator:** `generate.html` loads every playbook plus `data/generator.js` and `js/generate.js`. PCs are staged in localStorage then opened on `playbooks/<id>.html?generated=1`.
 - **Storage key:** `avatar-legends-sheet:<playbookId>`
 - **JSON export** wraps character state with `_meta` (playbook id, export time)
 - **Comments** in HTML/CSS/JS mark major sections for review

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<!--
+  generate.html — Constrained character randomizer
+  Open from the hub. No server required.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>Generate a character — Avatar Legends</title>
+  <link rel="stylesheet" href="css/sheet.css" />
+  <style>
+    .gen-page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1.25rem 1rem 3rem;
+    }
+    .gen-page h1 {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      margin: 0 0 0.35rem;
+      color: var(--ink);
+    }
+    .gen-lead {
+      color: var(--ink-soft);
+      max-width: 42rem;
+      margin: 0 0 1.25rem;
+    }
+    .gen-step {
+      border: 1px solid var(--line);
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 0.65rem 0.75rem 0.75rem;
+      margin: 0 0 0.7rem;
+    }
+    .gen-step legend {
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      color: var(--accent);
+      padding: 0 0.3rem;
+    }
+    .gen-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+    .gen-chip {
+      appearance: none;
+      border: 1px solid var(--line-strong);
+      background: var(--paper);
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 0.28rem 0.7rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .gen-chip:hover,
+    .gen-chip:focus-visible {
+      border-color: var(--accent);
+      outline: none;
+    }
+    .gen-chip.is-on {
+      background: color-mix(in srgb, var(--accent) 16%, white);
+      border-color: var(--accent);
+      font-weight: 700;
+    }
+    .gen-switch {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      margin: 0.75rem 0 1rem;
+      font-size: 0.95rem;
+      color: var(--ink);
+    }
+    .gen-switch input {
+      margin-top: 0.2rem;
+    }
+    .gen-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-top: 0.75rem;
+    }
+    .gen-page .primary-file,
+    .gen-leftover .primary-file,
+    .gen-page .secondary,
+    .gen-leftover .secondary {
+      font: inherit;
+      border-radius: 8px;
+      padding: 0.4rem 0.75rem;
+      cursor: pointer;
+      border: 1px solid var(--line-strong);
+      background: var(--paper);
+      color: var(--ink);
+    }
+    .gen-page .primary-file,
+    .gen-leftover .primary-file {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      font-weight: 700;
+    }
+    .gen-card {
+      margin-top: 1.25rem;
+      padding: 1rem 1.1rem 1.15rem;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--accent);
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+    .gen-card h2 {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      margin: 0.15rem 0 0.4rem;
+      color: var(--accent);
+      border: none;
+      padding: 0;
+      text-transform: none;
+      letter-spacing: normal;
+    }
+    .gen-kicker {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+    }
+    .gen-meta,
+    .gen-card p {
+      margin: 0.35rem 0;
+    }
+    .gen-rare {
+      color: var(--accent-2);
+      font-size: 0.92rem;
+    }
+    .gen-namelabel {
+      margin-top: 0.85rem !important;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+    }
+    .gen-custom-name {
+      width: 100%;
+      max-width: 22rem;
+      margin-top: 0.5rem;
+      padding: 0.4rem 0.55rem;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      font: inherit;
+    }
+    .gen-leftover {
+      background: #fff8ef;
+      border: 1px solid var(--gold);
+      border-radius: var(--radius);
+      padding: 0.9rem 1rem;
+      margin: 0 0 1.25rem;
+    }
+    .gen-leftover-list {
+      list-style: none;
+      padding: 0;
+      margin: 0.75rem 0 0;
+    }
+    .gen-leftover-list li {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 0.4rem;
+      padding: 0.45rem 0;
+      border-top: 1px solid var(--line);
+      font-size: 0.9rem;
+    }
+    .gen-mini-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+    }
+    #gen-status {
+      min-height: 1.2rem;
+      color: var(--accent-3);
+      font-size: 0.9rem;
+      margin: 0.5rem 0 0;
+    }
+    .toolbar .actions a.btn {
+      display: inline-flex;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#gen-main">Skip to generator</a>
+  <header class="toolbar" id="toolbar" role="banner">
+    <h1 id="toolbar-title">Generate a character</h1>
+    <nav class="actions" aria-label="Generator actions">
+      <span class="status-msg" id="gen-status" role="status" aria-live="polite"></span>
+      <a href="index.html" class="btn secondary">All playbooks</a>
+    </nav>
+  </header>
+
+  <main id="gen-main" class="gen-page" tabindex="-1">
+    <h1>Generate a character</h1>
+    <p class="gen-lead">
+      Lock what you already know (era, culture, training, playbook).
+      Leave the rest on Any / Surprise me. The generator picks from lists that still fit —
+      not a pile of unrelated dice. Player characters open on that playbook’s sheet so you can tweak.
+      NPCs stay on this page.
+    </p>
+
+    <div id="gen-leftover-slot" role="region" aria-label="Unsaved generated characters"></div>
+    <div id="gen-wizard"></div>
+    <div id="gen-preview" hidden></div>
+  </main>
+
+  <footer class="footer-note">
+    Unofficial fan tool for personal use. See <a href="NOTICE.md">NOTICE.md</a>.
+    Names are original culture-inspired lists, not copied from the rulebook.
+    <span id="footer-version"></span>
+  </footer>
+
+  <script src="data/version.js"></script>
+  <script src="data/common.js"></script>
+  <script src="data/campaign.js"></script>
+  <script src="data/playbooks/adamant.js"></script>
+  <script src="data/playbooks/bold.js"></script>
+  <script src="data/playbooks/guardian.js"></script>
+  <script src="data/playbooks/hammer.js"></script>
+  <script src="data/playbooks/icon.js"></script>
+  <script src="data/playbooks/idealist.js"></script>
+  <script src="data/playbooks/pillar.js"></script>
+  <script src="data/playbooks/prodigy.js"></script>
+  <script src="data/playbooks/rogue.js"></script>
+  <script src="data/playbooks/successor.js"></script>
+  <script src="data/playbooks/destined.js"></script>
+  <script src="data/playbooks/elder.js"></script>
+  <script src="data/playbooks/foundling.js"></script>
+  <script src="data/playbooks/razor.js"></script>
+  <script src="data/playbooks/architect.js"></script>
+  <script src="data/playbooks/authority.js"></script>
+  <script src="data/playbooks/bound.js"></script>
+  <script src="data/playbooks/broken.js"></script>
+  <script src="data/generator.js"></script>
+  <script src="js/sheet.js"></script>
+  <script src="js/generate.js"></script>
+</body>
+</html>

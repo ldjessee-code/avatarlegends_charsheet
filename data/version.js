@@ -14,4 +14,4 @@
  * docs/revision-history.md (past changes only — no future roadmap).
  */
 window.AL = window.AL || {};
-AL.VERSION = "2.3";
+AL.VERSION = "2.4";
