@@ -17,7 +17,7 @@
 :root {
   --ink: #1a1f2e;
   --ink-soft: #3d4659;
-  --muted: #6b7385;
+  --muted: #565e70;
   --paper: #f7f3ea;
   --paper-2: #efe8d8;
   --card: #fffcf6;
@@ -62,7 +62,7 @@ body.theme-fire {
   --line-strong: #c99a6e;
   --toolbar-bg: linear-gradient(180deg, #5a2010 0%, #3a1408 100%);
   --toolbar-border: #e07a20;
-  --header-bg: linear-gradient(135deg, #4a1808 0%, #8b2e12 50%, #c45c26 100%);
+  --header-bg: linear-gradient(135deg, #4a1808 0%, #8b2e12 50%, #9a481e 100%);
   --sec-identity: var(--accent);
   --sec-history: var(--accent);
   --sec-combat-stats: var(--accent);
@@ -84,7 +84,7 @@ body.theme-water {
   --line-strong: #7ab0c0;
   --toolbar-bg: linear-gradient(180deg, #0e3a4a 0%, #0a2834 100%);
   --toolbar-border: #4aa0b8;
-  --header-bg: linear-gradient(135deg, #0a3040 0%, #1a5a70 50%, #2a7a8a 100%);
+  --header-bg: linear-gradient(135deg, #0a3040 0%, #1a5a70 50%, #1f6270 100%);
   --sec-identity: var(--accent);
   --sec-history: var(--accent);
   --sec-combat-stats: var(--accent);
@@ -129,7 +129,7 @@ body.theme-air {
   --ink: #2a3540;
   --toolbar-bg: linear-gradient(180deg, #4a5560 0%, #3a444e 100%);
   --toolbar-border: #c0c8d0;
-  --header-bg: linear-gradient(135deg, #4a5560 0%, #6a7a8a 50%, #8a9aaa 100%);
+  --header-bg: linear-gradient(135deg, #3a4550 0%, #4a5662 50%, #525d6a 100%);
   --sec-identity: var(--accent);
   --sec-history: var(--accent);
   --sec-combat-stats: var(--accent);
@@ -173,7 +173,7 @@ body.theme-technology {
   --line-strong: #7090a8;
   --toolbar-bg: linear-gradient(180deg, #1a3040 0%, #122028 100%);
   --toolbar-border: #70a0c0;
-  --header-bg: linear-gradient(135deg, #122028 0%, #2a4a60 50%, #3a6a8a 100%);
+  --header-bg: linear-gradient(135deg, #122028 0%, #2a4a60 50%, #346180 100%);
   --sec-identity: var(--accent);
   --sec-history: var(--accent);
   --sec-combat-stats: var(--accent);
@@ -255,7 +255,7 @@ body {
   font: inherit;
   font-size: 0.88rem;
   cursor: pointer;
-  background: var(--accent);
+  background: color-mix(in srgb, var(--accent) 88%, #000);
   color: #fff;
   transition: transform 0.1s, opacity 0.15s, background 0.15s, padding 0.2s, font-size 0.2s;
 }
@@ -349,13 +349,13 @@ body {
   width: 88px;
   height: 88px;
   border-radius: 10px;
-  border: 2px dashed rgba(255, 255, 255, 0.35);
+  border: 2px dashed rgba(255, 255, 255, 0.55);
+  background: rgba(0, 0, 0, 0.2); /* a11y: was UA button grey under near-white text (1.03:1) */
   display: grid;
   place-items: center;
   font-size: 0.7rem;
   text-align: center;
   padding: 0.4rem;
-  opacity: 0.8;
   cursor: pointer;
   transition: width 0.25s, height 0.25s;
 }
@@ -405,7 +405,9 @@ body {
 }
 
 .sheet-header .char-name-input:focus {
-  outline: none;
+  /* a11y: keep the gold underline and add a visible 2px ring (was outline:none) */
+  outline: 2px solid #fff;
+  outline-offset: 2px;
   border-bottom-color: var(--gold);
 }
 
@@ -545,7 +547,7 @@ body {
   border-radius: 6px;
   border: 2px solid var(--section-accent, var(--accent));
   background: color-mix(in srgb, var(--section-accent, var(--accent)) 12%, #fff);
-  color: var(--section-accent, var(--accent));
+  color: color-mix(in srgb, var(--section-accent, var(--accent)) 60%, #000); /* a11y: darkened for 4.5:1 text contrast */
   font-weight: 700;
   font-size: 0.85rem;
   cursor: pointer;
@@ -557,7 +559,7 @@ body {
   margin: 0;
   font-family: var(--font-display);
   font-size: 1.05rem;
-  color: var(--section-accent, var(--accent));
+  color: color-mix(in srgb, var(--section-accent, var(--accent)) 60%, #000); /* a11y: darkened for 4.5:1 text contrast */
   letter-spacing: 0.03em;
   text-transform: uppercase;
   flex: 0 1 auto;
@@ -716,7 +718,7 @@ body {
 .subcard h3 {
   margin: 0 0 0.55rem;
   font-size: 0.82rem;
-  color: var(--section-accent, var(--accent-2));
+  color: color-mix(in srgb, var(--section-accent, var(--accent-2)) 60%, #000); /* a11y: darkened for 4.5:1 text contrast */
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -766,7 +768,9 @@ textarea {
 input:focus,
 select:focus,
 textarea:focus {
-  outline: 2px solid color-mix(in srgb, var(--accent) 45%, white);
+  /* a11y: was 45% accent on white (1.8:1); focus ring needs 3:1 */
+  outline: 2px solid color-mix(in srgb, var(--accent) 60%, #000);
+  outline-offset: 1px;
   border-color: var(--accent);
 }
 
@@ -798,7 +802,7 @@ textarea {
   gap: 0.35rem;
   border: 1px solid var(--line-strong);
   border-radius: 999px;
-  padding: 0.3rem 0.65rem;
+  padding: 0.1rem 0.65rem 0.1rem 0.4rem; /* a11y: vertical padding trimmed to fit the 24px checkbox */
   background: #fff;
   cursor: pointer;
   font-size: 0.88rem;
@@ -812,7 +816,7 @@ textarea {
   font-weight: 600;
 }
 
-.chip input { accent-color: var(--accent); }
+.chip input { accent-color: var(--accent); width: 24px; height: 24px; margin: 0; } /* a11y: 24px target (WCAG 2.5.8) */
 
 .chip.condition:has(input:checked) {
   background: color-mix(in srgb, var(--danger) 12%, white);
@@ -861,7 +865,7 @@ textarea {
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--accent-2);
+  color: color-mix(in srgb, var(--accent-2) 60%, #000); /* a11y: darkened for 4.5:1 text contrast */
   margin-bottom: 0.25rem;
 }
 
@@ -907,8 +911,8 @@ textarea {
   font-size: 1rem;
 }
 
-.balance-labels .left { color: var(--accent); }
-.balance-labels .right { color: var(--accent-2); }
+.balance-labels .left { color: color-mix(in srgb, var(--accent) 60%, #000); } /* a11y: 4.5:1 */
+.balance-labels .right { color: color-mix(in srgb, var(--accent-2) 60%, #000); } /* a11y: 4.5:1 */
 
 .balance-pips {
   display: flex;
@@ -929,7 +933,7 @@ textarea {
 }
 
 .balance-pip.current {
-  background: var(--accent);
+  background: color-mix(in srgb, var(--accent) 88%, #000);
   border-color: var(--accent);
   color: #fff;
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
@@ -972,7 +976,7 @@ textarea {
 }
 
 .track-box.filled {
-  background: var(--accent);
+  background: color-mix(in srgb, var(--accent) 88%, #000); /* a11y: white mark needs 4.5:1 */
   border-color: var(--accent);
   color: #fff;
 }
@@ -1032,7 +1036,7 @@ textarea {
 .move-library details summary {
   cursor: pointer;
   font-weight: 600;
-  color: var(--accent-2);
+  color: color-mix(in srgb, var(--accent-2) 60%, #000); /* a11y: darkened for 4.5:1 text contrast */
   font-size: 0.9rem;
 }
 
@@ -1061,7 +1065,7 @@ textarea {
   appearance: none;
   border: 1px solid var(--accent);
   background: color-mix(in srgb, var(--accent) 12%, #fff);
-  color: var(--accent);
+  color: color-mix(in srgb, var(--accent) 60%, #000); /* a11y: darkened for 4.5:1 text contrast */
   font: inherit;
   font-size: 0.75rem;
   font-weight: 700;
@@ -1198,11 +1202,11 @@ textarea {
   margin-top: 0.75rem;
 }
 
-.moment.locked { opacity: 0.72; }
+.moment.locked { opacity: 0.85; } /* a11y: was 0.72; lower opacity pushed the lock note under 4.5:1 */
 
 .moment .lock-note {
   font-size: 0.8rem;
-  color: var(--gold);
+  color: color-mix(in srgb, var(--gold) 45%, #000); /* a11y: darkened for 4.5:1 text contrast */
   font-weight: 600;
   margin-bottom: 0.4rem;
 }
@@ -1262,7 +1266,7 @@ textarea {
   gap: 0.35rem;
   border: 1px solid var(--line-strong);
   border-radius: 999px;
-  padding: 0.35rem 0.7rem;
+  padding: 0.1rem 0.7rem 0.1rem 0.4rem; /* a11y: trimmed to fit the 24px radio */
   background: #fff;
   font-size: 0.85rem;
   cursor: pointer;
@@ -1279,6 +1283,9 @@ textarea {
 
 .campaign-mode-chip input {
   accent-color: var(--accent);
+  width: 24px; /* a11y: 24px target (WCAG 2.5.8) */
+  height: 24px;
+  margin: 0;
 }
 
 .campaign-banner-actions {
@@ -1363,7 +1370,7 @@ textarea {
   background: #fff;
   cursor: pointer;
   font-weight: 700;
-  color: var(--sec-sessions);
+  color: color-mix(in srgb, var(--sec-sessions) 60%, #000); /* a11y: darkened for 4.5:1 text contrast */
 }
 
 .session-note-meta {
@@ -1450,7 +1457,7 @@ textarea {
 .btn-session-img.add {
   border-style: dashed;
   border-color: var(--accent);
-  color: var(--accent);
+  color: color-mix(in srgb, var(--accent) 60%, #000); /* a11y: darkened for 4.5:1 text contrast */
   background: color-mix(in srgb, var(--accent) 8%, #fff);
   min-height: 5.5rem;
   display: grid;
@@ -1491,7 +1498,7 @@ textarea {
 }
 
 .footer-note a {
-  color: var(--accent-2);
+  color: color-mix(in srgb, var(--accent-2) 60%, #000); /* a11y: darkened for 4.5:1 text contrast */
   font-weight: 600;
 }
 
@@ -1629,7 +1636,7 @@ button.portrait-placeholder {
   font-family: var(--font-display);
   font-size: 1.2rem;
   margin: 0 0 0.5rem;
-  color: var(--accent);
+  color: color-mix(in srgb, var(--accent) 60%, #000); /* a11y: darkened for 4.5:1 text contrast */
   border: none;
   padding: 0;
   text-transform: none;
@@ -1658,3 +1665,22 @@ button.portrait-placeholder {
   .section-body[hidden] { display: block !important; }
   .sheet-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
+
+
+/* ========== Accessibility: target size (WCAG 2.2 SC 2.5.8, 24 x 24 CSS px minimum) ========== */
+.sheet-header .portrait-actions button,
+.session-note .remove-btn,
+.session-note-head .session-toggle,
+.track-box.growth-inline,
+.advancement .mini-box {
+  min-width: 24px;
+  min-height: 24px;
+}
+
+.move-library details summary {
+  min-height: 24px;
+  padding-block: 2px;
+}
+
+/* ========== Accessibility: sticky toolbar must not hide focused fields (WCAG 2.2 SC 2.4.11) ========== */
+html { scroll-padding-top: 5.5rem; }
