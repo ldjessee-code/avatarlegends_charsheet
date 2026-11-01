@@ -42,7 +42,7 @@
     }
     .docs-nav strong {
       display: block;
-      color: var(--accent);
+      color: color-mix(in srgb, var(--accent) 60%, #000);
       font-family: var(--font-display);
       margin-bottom: 0.25rem;
     }
@@ -58,7 +58,7 @@
     .docs article h2 {
       font-family: var(--font-display);
       font-size: 1.25rem;
-      color: var(--accent);
+      color: color-mix(in srgb, var(--accent) 60%, #000);
       margin: 0 0 0.75rem;
     }
     .docs article h3 {
@@ -103,6 +103,7 @@
     }
     .back {
       display: inline-block;
+      padding-block: 0.15rem;
       margin-bottom: 1rem;
       color: var(--accent-2);
       font-weight: 600;
@@ -110,7 +111,7 @@
   </style>
 </head>
 <body>
-  <div class="docs">
+  <main class="docs">
     <a class="back" href="../index.html">← All playbooks</a>
     <h1>Documentation</h1>
     <p class="lead">
@@ -257,7 +258,7 @@
       Game by <a href="https://magpiegames.com/">Magpie Games</a>; marks © Viacom / Paramount family.
       <span id="footer-version"></span>
     </p>
-  </div>
+  </main>
   <script src="../data/version.js"></script>
   <script>
     (function () {

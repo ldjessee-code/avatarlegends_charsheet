@@ -16,7 +16,8 @@
       margin: 0 auto;
       padding: 1.25rem 1rem 3rem;
     }
-    .gen-page h1 {
+    .gen-page h1,
+    .gen-page .gen-title {
       font-family: var(--font-display);
       font-size: 2rem;
       margin: 0 0 0.35rem;
@@ -37,7 +38,7 @@
     .gen-step legend {
       font-family: var(--font-display);
       font-size: 0.95rem;
-      color: var(--accent);
+      color: color-mix(in srgb, var(--accent) 60%, #000);
       padding: 0 0.3rem;
     }
     .gen-chips {
@@ -58,7 +59,11 @@
     .gen-chip:hover,
     .gen-chip:focus-visible {
       border-color: var(--accent);
-      outline: none;
+    }
+    .gen-chip:focus-visible {
+      /* a11y: visible focus ring (was outline:none with only a 1px border change) */
+      outline: 3px solid color-mix(in srgb, var(--accent) 60%, #000);
+      outline-offset: 2px;
     }
     .gen-chip.is-on {
       background: color-mix(in srgb, var(--accent) 16%, white);
@@ -74,7 +79,11 @@
       color: var(--ink);
     }
     .gen-switch input {
-      margin-top: 0.2rem;
+      /* a11y: 24px target (WCAG 2.5.8) */
+      width: 24px;
+      height: 24px;
+      margin: 0;
+      flex-shrink: 0;
     }
     .gen-actions {
       display: flex;
@@ -96,7 +105,7 @@
     }
     .gen-page .primary-file,
     .gen-leftover .primary-file {
-      background: var(--accent);
+      background: color-mix(in srgb, var(--accent) 88%, #000); /* a11y: white text needs 4.5:1 */
       border-color: var(--accent);
       color: #fff;
       font-weight: 700;
@@ -114,7 +123,7 @@
       font-family: var(--font-display);
       font-size: 1.35rem;
       margin: 0.15rem 0 0.4rem;
-      color: var(--accent);
+      color: color-mix(in srgb, var(--accent) 60%, #000);
       border: none;
       padding: 0;
       text-transform: none;
@@ -199,7 +208,7 @@
   </header>
 
   <main id="gen-main" class="gen-page" tabindex="-1">
-    <h1>Generate a character</h1>
+    <h2 class="gen-title">Generate a character</h2>
     <p class="gen-lead">
       Lock what you already know (era, culture, training, playbook).
       Leave the rest on Any / Surprise me. The generator picks from lists that still fit —

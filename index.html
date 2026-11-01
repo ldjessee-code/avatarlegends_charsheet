@@ -63,7 +63,7 @@
       color: #374151;
     }
     .pb-card.utility .src {
-      color: #6b7280;
+      color: #596271; /* a11y: was #6b7280 (4.4:1) */
     }
     .pb-card.utility .badge {
       background: #e5e7eb;
@@ -73,7 +73,7 @@
       margin: 0 0 0.25rem;
       font-family: var(--font-display);
       font-size: 1.15rem;
-      color: var(--accent);
+      color: color-mix(in srgb, var(--accent) 60%, #000);
       border: none;
       padding: 0;
       text-transform: none;
@@ -110,13 +110,13 @@
     }
     .callout h3 {
       margin: 0 0 0.4rem;
-      color: var(--accent);
+      color: color-mix(in srgb, var(--accent) 60%, #000);
       font-family: var(--font-display);
     }
   </style>
 </head>
 <body>
-  <div class="hub">
+  <main class="hub">
     <h1>Avatar Legends</h1>
     <p class="lead">
       Digital HTML/CSS/JS character sheets for Powered by the Apocalypse playbooks
@@ -215,7 +215,7 @@
       <a href="https://magpiegames.com/" target="_blank" rel="noopener noreferrer">Magpie Games</a>.
       <span id="footer-version"></span>
     </p>
-  </div>
+  </main>
   <script src="data/version.js"></script>
   <script>
     (function () {
