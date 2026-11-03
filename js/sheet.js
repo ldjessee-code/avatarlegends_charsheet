@@ -388,6 +388,7 @@
     if (placeholder) i.placeholder = placeholder;
     if (opts && opts.maxLength) i.maxLength = opts.maxLength;
     if (opts && opts.className) i.className = opts.className;
+    if (opts && opts.ariaLabel) i.setAttribute("aria-label", opts.ariaLabel);
     i.addEventListener("input", () => onInput(i.value));
     return i;
   }
@@ -665,7 +666,7 @@
       ph.type = "button";
       ph.className = "portrait-placeholder" + (expanded ? " is-expanded" : "");
       ph.textContent = "No image";
-      ph.setAttribute("aria-label", "No character portrait. Click to add an image.");
+      ph.setAttribute("aria-label", "No image. Click to add a character portrait.");
       ph.setAttribute("data-focus-key", "portrait-placeholder");
       ph.addEventListener("click", () => $("#portrait-file") && $("#portrait-file").click());
       portraitWrap.appendChild(ph);
@@ -693,7 +694,7 @@
     uploadBtn.textContent = state.portraitDataUrl ? "Change" : "Add image";
     uploadBtn.setAttribute(
       "aria-label",
-      state.portraitDataUrl ? "Change character portrait" : "Add character portrait"
+      state.portraitDataUrl ? "Change character portrait" : "Add image as character portrait"
     );
     uploadBtn.setAttribute("data-focus-key", "portrait-upload");
     uploadBtn.addEventListener("click", () => file.click());
@@ -791,7 +792,7 @@
 
         const connTitle = document.createElement("h3");
         connTitle.style.cssText =
-          "margin:0.85rem 0 0.45rem;font-size:0.82rem;text-transform:uppercase;letter-spacing:0.04em;color:var(--sec-history)";
+          "margin:0.85rem 0 0.45rem;font-size:0.82rem;text-transform:uppercase;letter-spacing:0.04em;color:color-mix(in srgb,var(--sec-history) 60%,#000)";
         connTitle.textContent = "Connections";
         body.appendChild(connTitle);
 
@@ -805,7 +806,8 @@
                 state.connections[c.id] = v;
                 scheduleSave();
               },
-              "PC name"
+              "PC name",
+              { ariaLabel: "PC name: " + c.prompt }
             )
           );
           const prompt = document.createElement("div");
@@ -818,7 +820,7 @@
 
         const histTitle = document.createElement("h3");
         histTitle.style.cssText =
-          "margin:0.85rem 0 0.25rem;font-size:0.82rem;text-transform:uppercase;letter-spacing:0.04em;color:var(--sec-history)";
+          "margin:0.85rem 0 0.25rem;font-size:0.82rem;text-transform:uppercase;letter-spacing:0.04em;color:color-mix(in srgb,var(--sec-history) 60%,#000)";
         histTitle.textContent = "History questions";
         body.appendChild(histTitle);
         body.appendChild(
@@ -836,6 +838,7 @@
           qq.textContent = q;
           item.appendChild(qq);
           const ta = document.createElement("textarea");
+          ta.setAttribute("aria-label", q);
           ta.value = state.historyAnswers[i] || "";
           ta.addEventListener("input", () => {
             state.historyAnswers[i] = ta.value;
@@ -1326,7 +1329,7 @@
     const box = document.createElement("div");
     box.className = "drives-box";
     const h = document.createElement("h3");
-    h.style.cssText = "margin:0.5rem 0 0.35rem;font-size:0.82rem;color:var(--gold)";
+    h.style.cssText = "margin:0.5rem 0 0.35rem;font-size:0.82rem;color:color-mix(in srgb,var(--gold) 60%,#000)";
     h.textContent = "Drives (mark 4 at start; strike when fulfilled)";
     box.appendChild(h);
     const markedCount = Object.values(state.featureFields.drives).filter((v) => v === "marked").length;
@@ -1402,7 +1405,7 @@
         const feat = document.createElement("div");
         feat.className = "feature-box";
         const fh = document.createElement("h3");
-        fh.style.cssText = "margin:0 0 0.5rem;color:var(--gold)";
+        fh.style.cssText = "margin:0 0 0.5rem;color:color-mix(in srgb,var(--gold) 60%,#000)";
         fh.textContent = pb.feature.name || "Feature";
         feat.appendChild(fh);
         (pb.feature.fields || []).forEach((f) => {
@@ -1456,7 +1459,7 @@
 
         const extraTitle = document.createElement("h3");
         extraTitle.style.cssText =
-          "margin:0.5rem 0;font-size:0.82rem;text-transform:uppercase;color:var(--sec-playbook)";
+          "margin:0.5rem 0;font-size:0.82rem;text-transform:uppercase;color:color-mix(in srgb,var(--sec-playbook) 60%,#000)";
         extraTitle.textContent = "Additional / other-playbook moves";
         picker.appendChild(extraTitle);
 
@@ -1477,6 +1480,7 @@
           );
           const ta = document.createElement("textarea");
           ta.placeholder = "Move text…";
+          ta.setAttribute("aria-label", `Additional move ${idx + 1} text`);
           ta.value = m.text || "";
           ta.addEventListener("input", () => {
             state.otherPlaybookMoves[idx].text = ta.value;
@@ -1602,6 +1606,7 @@
       },
       `Move slot ${index + 1}`
     );
+    sel.setAttribute("aria-label", `Move slot ${index + 1}`);
     slot.appendChild(sel);
 
     if (isCustom) {
@@ -1614,12 +1619,14 @@
             state.customMoves[index].name = v;
             scheduleSave();
           },
-          "Custom move name"
+          "Custom move name",
+          { ariaLabel: `Custom move ${index + 1} name` }
         )
       );
       const ta = document.createElement("textarea");
       ta.value = cm.text || "";
       ta.placeholder = "Custom move text…";
+      ta.setAttribute("aria-label", `Custom move ${index + 1} text`);
       ta.addEventListener("input", () => {
         state.customMoves[index].text = ta.value;
         scheduleSave();
@@ -1869,7 +1876,7 @@
 
         const trackLabel = document.createElement("h3");
         trackLabel.style.cssText =
-          "margin:0.75rem 0 0.4rem;font-size:0.82rem;text-transform:uppercase;color:var(--sec-growth)";
+          "margin:0.75rem 0 0.4rem;font-size:0.82rem;text-transform:uppercase;color:color-mix(in srgb,var(--sec-growth) 60%,#000)";
         trackLabel.textContent = "Growth track";
         body.appendChild(trackLabel);
         const track = document.createElement("div");
@@ -1904,7 +1911,7 @@
 
         const advTitle = document.createElement("h3");
         advTitle.style.cssText =
-          "margin:0.85rem 0 0.4rem;font-size:0.82rem;text-transform:uppercase;color:var(--sec-growth)";
+          "margin:0.85rem 0 0.4rem;font-size:0.82rem;text-transform:uppercase;color:color-mix(in srgb,var(--sec-growth) 60%,#000)";
         advTitle.textContent = "Growth advancements";
         body.appendChild(advTitle);
 
@@ -1919,6 +1926,8 @@
             const b = document.createElement("button");
             b.type = "button";
             b.className = "mini-box" + (slots[i] ? " filled" : "");
+            b.setAttribute("aria-label", `${a.name}, box ${i + 1} of ${a.slots}`);
+            b.setAttribute("aria-pressed", slots[i] ? "true" : "false");
             b.addEventListener("click", () => {
               if (!state.advancements[a.id]) state.advancements[a.id] = Array(a.slots).fill(false);
               state.advancements[a.id][i] = !state.advancements[a.id][i];

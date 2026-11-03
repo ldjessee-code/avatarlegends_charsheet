@@ -9,3 +9,6 @@ Thumbs.db
 /tmp/
 playbooks_raw.json
 data/playbooks_raw.json
+
+# Accessibility test tooling (optional local copy of axe-core)
+tests/a11y/vendor/

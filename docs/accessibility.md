@@ -27,6 +27,8 @@ We aim to make the sheets usable for as many people as possible, including:
 | Landmarks / skip link | Banner, main, footer; “Skip to character sheet” |
 | Focus after re-render | Restored via `data-focus-key` where controls re-render |
 | `prefers-reduced-motion` | Toolbar/portrait transitions reduced when requested |
+| Automated WCAG 2.2 AA checks (contrast in all six themes, names, focus ring, 24 px targets, label in name, axe-core) | `tests/run-tests.ps1`; passing as of the 2026-11-01 review branch |
+| Manual checks (screen readers, zoom/reflow, keyboard order, content) | Not yet done by a person |
 | Full WCAG 2.2 AA certification | **Not claimed** |
 | Languages | English UI only for now |
 | Native App Intents / Siri | Not part of this web project |
